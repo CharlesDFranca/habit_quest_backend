@@ -27,7 +27,7 @@ export abstract class Entity {
     return new Date(this._createdAt.getTime());
   }
 
-  get updatedAt(): Date | undefined {
+  get updatedAt(): Date {
     return new Date(this._updatedAt.getTime());
   }
 
