@@ -59,4 +59,29 @@ describe("EnvConfig unit tests", () => {
 
     expect(afterTouch).toBeGreaterThan(beforeTouch);
   });
+
+  it("should throw an error if createdAt is after updatedAt", () => {
+    const createdAt = new Date("2022-01-01T00:00:00Z");
+    const updatedAt = new Date("2021-01-01T00:00:00Z");
+
+    expect(() => {
+      new StubEntity(randomUUID(), createdAt, updatedAt);
+    }).toThrowError("Entity creation date cannot be after updated date");
+  });
+
+  it("should return true when two entities have the same id (isEqual)", () => {
+    const id = randomUUID();
+
+    const entity1 = new StubEntity(id);
+    const entity2 = new StubEntity(id);
+
+    expect(entity1.isEqual(entity2)).toBe(true);
+  });
+
+  it("should return false when two entities have different ids (isEqual)", () => {
+    const entity1 = new StubEntity(randomUUID());
+    const entity2 = new StubEntity(randomUUID());
+
+    expect(entity1.isEqual(entity2)).toBe(false);
+  });
 });

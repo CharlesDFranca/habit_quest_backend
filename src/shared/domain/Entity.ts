@@ -7,6 +7,14 @@ export abstract class Entity {
     _createdAt?: Date,
     _updatedAt?: Date,
   ) {
+    if (
+      _createdAt !== undefined &&
+      _updatedAt !== undefined &&
+      _createdAt.getTime() > _updatedAt.getTime()
+    ) {
+      throw new Error("Entity creation date cannot be after updated date");
+    }
+
     this._createdAt = _createdAt ?? new Date();
     this._updatedAt = _updatedAt ?? new Date();
   }
@@ -25,5 +33,9 @@ export abstract class Entity {
 
   protected touch() {
     this._updatedAt = new Date();
+  }
+
+  isEqual(other: Entity): boolean {
+    return this.id == other.id;
   }
 }
