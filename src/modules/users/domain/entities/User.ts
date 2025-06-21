@@ -1,11 +1,12 @@
 import { Entity } from "@/shared/domain/entities/Entity";
 import { Email } from "../value-objects/Email";
 import { Name } from "@/shared/domain/value-objects/Name";
+import { Alias } from "@/shared/domain/value-objects/Alias";
 
 type UserProps = {
   name: Name;
   email: Email;
-  alias: string;
+  alias: Alias;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -31,7 +32,7 @@ export class User extends Entity {
     return this.props.email;
   }
 
-  get alias(): string {
+  get alias(): Alias {
     return this.props.alias;
   }
   //#endregion
@@ -42,7 +43,7 @@ export class User extends Entity {
     this.touch();
   }
 
-  updateAlias(alias: string): void {
+  updateAlias(alias: Alias): void {
     this.props.alias = alias;
     this.touch();
   }

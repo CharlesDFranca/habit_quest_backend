@@ -3,13 +3,14 @@ import { User } from "@/modules/users/domain/entities/User";
 import { randomUUID } from "node:crypto";
 import { Email } from "@/modules/users/domain/value-objects/Email";
 import { Name } from "@/shared/domain/value-objects/Name";
+import { Alias } from "@/shared/domain/value-objects/Alias";
 
 describe("User entity unit tests", () => {
   let userId: string;
   let initialProps: {
     name: Name;
     email: Email;
-    alias: string;
+    alias: Alias;
     createdAt?: Date;
     updatedAt?: Date;
   };
@@ -19,7 +20,7 @@ describe("User entity unit tests", () => {
     initialProps = {
       name: Name.create({ value: "John Doe" }),
       email: Email.create({ value: "john.doe@example.com" }),
-      alias: "johnd",
+      alias: Alias.create({ value: "johnd" }),
     };
   });
 
@@ -28,7 +29,7 @@ describe("User entity unit tests", () => {
 
     expect(user.name.value).toBe("John Doe");
     expect(user.email.value).toBe("john.doe@example.com");
-    expect(user.alias).toBe("johnd");
+    expect(user.alias.value).toBe("johnd");
   });
 
   it("should update name and refresh updatedAt", async () => {
@@ -65,9 +66,11 @@ describe("User entity unit tests", () => {
 
     await new Promise((resolve) => setTimeout(resolve, 10));
 
-    user.updateAlias("janed");
+    const alias = Alias.create({ value: "janed" });
 
-    expect(user.alias).toBe("janed");
+    user.updateAlias(alias);
+
+    expect(user.alias.value).toBe("janed");
     expect(user.updatedAt.getTime()).toBeGreaterThan(oldUpdatedAt);
   });
 
