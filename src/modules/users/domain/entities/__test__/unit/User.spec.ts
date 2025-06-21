@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { User } from "@/modules/users/domain/entities/User";
 import { randomUUID } from "node:crypto";
+import { Email } from "../../../value-objects/Email";
 
 describe("User Entity Unit Tests (Focused on User logic)", () => {
   let userId: string;
   let initialProps: {
     name: string;
-    email: string;
+    email: Email;
     alias: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -16,7 +17,7 @@ describe("User Entity Unit Tests (Focused on User logic)", () => {
     userId = randomUUID();
     initialProps = {
       name: "John Doe",
-      email: "john.doe@example.com",
+      email: Email.create({ value: "john.doe@example.com" }),
       alias: "johnd",
     };
   });
@@ -25,7 +26,7 @@ describe("User Entity Unit Tests (Focused on User logic)", () => {
     const user = User.create(userId, initialProps);
 
     expect(user.name).toBe("John Doe");
-    expect(user.email).toBe("john.doe@example.com");
+    expect(user.email.value).toBe("john.doe@example.com");
     expect(user.alias).toBe("johnd");
   });
 
@@ -47,9 +48,11 @@ describe("User Entity Unit Tests (Focused on User logic)", () => {
 
     await new Promise((resolve) => setTimeout(resolve, 10));
 
-    user.updateEmail("jane.doe@example.com");
+    const newEmail = Email.create({ value: "jane.doe@example.com" });
 
-    expect(user.email).toBe("jane.doe@example.com");
+    user.updateEmail(newEmail);
+
+    expect(user.email.value).toBe("jane.doe@example.com");
     expect(user.updatedAt.getTime()).toBeGreaterThan(oldUpdatedAt);
   });
 

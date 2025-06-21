@@ -1,8 +1,9 @@
 import { Entity } from "@/shared/domain/entities/Entity";
+import { Email } from "../value-objects/Email";
 
 type UserProps = {
   name: string;
-  email: string;
+  email: Email;
   alias: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -25,7 +26,7 @@ export class User extends Entity {
     return this.props.name;
   }
 
-  get email(): string {
+  get email(): Email {
     return this.props.email;
   }
 
@@ -45,7 +46,7 @@ export class User extends Entity {
     this.touch();
   }
 
-  updateEmail(email: string): void {
+  updateEmail(email: Email): void {
     this.props.email = email;
     this.touch();
   }
