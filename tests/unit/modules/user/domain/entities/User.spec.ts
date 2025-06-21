@@ -2,11 +2,12 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { User } from "@/modules/users/domain/entities/User";
 import { randomUUID } from "node:crypto";
 import { Email } from "@/modules/users/domain/value-objects/Email";
+import { Name } from "@/shared/domain/value-objects/Name";
 
-describe("User Entity Unit Tests (Focused on User logic)", () => {
+describe("User entity unit tests", () => {
   let userId: string;
   let initialProps: {
-    name: string;
+    name: Name;
     email: Email;
     alias: string;
     createdAt?: Date;
@@ -16,7 +17,7 @@ describe("User Entity Unit Tests (Focused on User logic)", () => {
   beforeEach(() => {
     userId = randomUUID();
     initialProps = {
-      name: "John Doe",
+      name: Name.create({ value: "John Doe" }),
       email: Email.create({ value: "john.doe@example.com" }),
       alias: "johnd",
     };
@@ -25,7 +26,7 @@ describe("User Entity Unit Tests (Focused on User logic)", () => {
   it("should expose getters correctly", () => {
     const user = User.create(userId, initialProps);
 
-    expect(user.name).toBe("John Doe");
+    expect(user.name.value).toBe("John Doe");
     expect(user.email.value).toBe("john.doe@example.com");
     expect(user.alias).toBe("johnd");
   });
@@ -36,9 +37,11 @@ describe("User Entity Unit Tests (Focused on User logic)", () => {
 
     await new Promise((resolve) => setTimeout(resolve, 10));
 
-    user.updateName("Jane Doe");
+    const newName = Name.create({ value: "Jane Doe" });
 
-    expect(user.name).toBe("Jane Doe");
+    user.updateName(newName);
+
+    expect(user.name.value).toBe("Jane Doe");
     expect(user.updatedAt.getTime()).toBeGreaterThan(oldUpdatedAt);
   });
 
@@ -74,7 +77,9 @@ describe("User Entity Unit Tests (Focused on User logic)", () => {
 
     await new Promise((resolve) => setTimeout(resolve, 10));
 
-    user.updateName("Another Name");
+    const newName = Name.create({ value: "John Doe" });
+
+    user.updateName(newName);
 
     expect(user.createdAt.getTime()).toBe(originalCreatedAt);
   });

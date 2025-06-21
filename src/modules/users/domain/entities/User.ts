@@ -1,8 +1,9 @@
 import { Entity } from "@/shared/domain/entities/Entity";
 import { Email } from "../value-objects/Email";
+import { Name } from "@/shared/domain/value-objects/Name";
 
 type UserProps = {
-  name: string;
+  name: Name;
   email: Email;
   alias: string;
   createdAt?: Date;
@@ -22,7 +23,7 @@ export class User extends Entity {
   }
 
   //#region getters methods
-  get name(): string {
+  get name(): Name {
     return this.props.name;
   }
 
@@ -36,7 +37,7 @@ export class User extends Entity {
   //#endregion
 
   //#region change methods
-  updateName(name: string): void {
+  updateName(name: Name): void {
     this.props.name = name;
     this.touch();
   }
