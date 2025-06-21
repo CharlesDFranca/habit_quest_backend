@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ValueObject } from "../../ValueObject";
+import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type StubValueObjectProps = { value: string };
 

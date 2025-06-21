@@ -1,5 +1,5 @@
+import { envConfig } from "@/config/EnvConfig";
 import { describe, it, expect } from "vitest";
-import { envConfig } from "../../EnvConfig";
 
 describe("EnvConfig unit tests", () => {
   const sut = envConfig;

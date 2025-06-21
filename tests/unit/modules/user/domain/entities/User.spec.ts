@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { User } from "@/modules/users/domain/entities/User";
 import { randomUUID } from "node:crypto";
-import { Email } from "../../../value-objects/Email";
+import { Email } from "@/modules/users/domain/value-objects/Email";
 
 describe("User Entity Unit Tests (Focused on User logic)", () => {
   let userId: string;

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { randomUUID } from "node:crypto";
-import { Entity } from "../../Entity";
+import { Entity } from "@/shared/domain/entities/Entity";
 
 class StubEntity extends Entity {
   update() {

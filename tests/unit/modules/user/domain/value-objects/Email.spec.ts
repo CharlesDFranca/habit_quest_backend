@@ -1,5 +1,5 @@
+import { Email } from "@/modules/users/domain/value-objects/Email";
 import { describe, it, expect } from "vitest";
-import { Email } from "../../Email";
 
 describe("Email value-object unit tests", () => {
   describe("Valid emails", () => {
