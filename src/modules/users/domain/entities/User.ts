@@ -2,11 +2,13 @@ import { Entity } from "@/shared/domain/entities/Entity";
 import { Email } from "../value-objects/Email";
 import { Name } from "@/shared/domain/value-objects/Name";
 import { Alias } from "@/shared/domain/value-objects/Alias";
+import { Password } from "../value-objects/Password";
 
 type UserProps = {
   name: Name;
-  email: Email;
   alias: Alias;
+  email: Email;
+  password: Password;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -35,6 +37,10 @@ export class User extends Entity {
   get alias(): Alias {
     return this.props.alias;
   }
+
+  get password(): Password {
+    return this.props.password;
+  }
   //#endregion
 
   //#region change methods
@@ -50,6 +56,11 @@ export class User extends Entity {
 
   updateEmail(email: Email): void {
     this.props.email = email;
+    this.touch();
+  }
+
+  updatePassword(password: Password): void {
+    this.props.password = password;
     this.touch();
   }
   //#endregion
