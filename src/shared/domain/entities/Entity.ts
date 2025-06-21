@@ -1,9 +1,11 @@
-export abstract class Entity {
+import { Id, IdType } from "../value-objects/Id";
+
+export abstract class Entity<T extends IdType> {
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 
   constructor(
-    private readonly _id: string,
+    private readonly _id?: Id<T>,
     _createdAt?: Date,
     _updatedAt?: Date,
   ) {
@@ -19,7 +21,7 @@ export abstract class Entity {
     this._updatedAt = _updatedAt ?? new Date();
   }
 
-  get id(): string {
+  get id(): Id<T> | undefined {
     return this._id;
   }
 
@@ -35,7 +37,7 @@ export abstract class Entity {
     this._updatedAt = new Date();
   }
 
-  isEqual(other: Entity): boolean {
+  isEqual(other: Entity<T>): boolean {
     return this.id == other.id;
   }
 }

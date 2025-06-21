@@ -2,7 +2,7 @@ import { IdGenerator } from "../services/IdGenerator";
 import { IIdGenerator } from "../services/intefaces/IIdGenerator";
 import { ValueObject } from "./ValueObject";
 
-type IdType = "UserId";
+export type IdType = "UserId";
 
 type IdProps = { value: string };
 

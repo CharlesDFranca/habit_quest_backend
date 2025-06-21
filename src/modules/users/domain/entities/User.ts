@@ -3,6 +3,7 @@ import { Email } from "../value-objects/Email";
 import { Name } from "@/shared/domain/value-objects/Name";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 import { Password } from "../value-objects/Password";
+import { Id } from "@/shared/domain/value-objects/Id";
 
 type UserProps = {
   name: Name;
@@ -13,15 +14,17 @@ type UserProps = {
   updatedAt?: Date;
 };
 
-export class User extends Entity {
+export class User extends Entity<"UserId"> {
   private constructor(
-    private readonly userId: string,
+    private readonly userId: Id<"UserId">,
     private readonly props: UserProps,
   ) {
     super(userId, props.createdAt, props.updatedAt);
   }
 
-  static create(id: string, props: UserProps): User {
+  static create(props: UserProps, _id?: Id<"UserId">): User {
+    const id = _id ?? Id.generate<"UserId">();
+
     return new User(id, props);
   }
 
