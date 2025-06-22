@@ -72,7 +72,7 @@ export class Post extends Entity<"PostId"> {
 
   removeImage(image: ImageUrl): void {
     const filteredImages = this.props.images.filter(
-      (postImage) => postImage != image,
+      (postImage) => !postImage.isEqual(image),
     );
 
     this.updateImages(filteredImages);
