@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { Post } from "@/modules/social/posts/domain/entities/Post";
 import { PostContent } from "@/modules/social/posts/domain/value-objects/PostContent";
+import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
 
 const makePost = (createAt?: Date, updatedAt?: Date) => {
   return new (class extends Post {
@@ -37,7 +38,7 @@ describe("Post entity unit tests", () => {
     expect(sut.content.value).toBe("Initial content");
     expect(sut.commentIds).toBeInstanceOf(Array<Id<"CommentId">>);
     expect(sut.likeIds).toBeInstanceOf(Array<Id<"LikeId">>);
-    expect(sut.images).toBeInstanceOf(Array<string>);
+    expect(sut.images).toBeInstanceOf(Array<ImageUrl>);
   });
 
   it("should return commentIds safely (immutable array)", () => {
@@ -65,7 +66,9 @@ describe("Post entity unit tests", () => {
 
     expect(Array.isArray(images)).toBeTruthy();
 
-    images.push("new-image.png");
+    const newImage = ImageUrl.create({ value: "new-image.png" });
+
+    images.push(newImage);
 
     expect(sut.images.length).toBe(0);
   });
@@ -87,34 +90,40 @@ describe("Post entity unit tests", () => {
     const oldUpdatedAt = sut.updatedAt;
 
     vi.advanceTimersByTime(10);
-    sut.addImage("image1.png");
+    const newImage = ImageUrl.create({ value: "image1.png" });
+    sut.addImage(newImage);
 
-    expect(sut.images).toContain("image1.png");
+    expect(sut.images).toContain(newImage);
     expect(sut.updatedAt.getTime()).toBeGreaterThan(oldUpdatedAt.getTime());
   });
 
   it("should not allow more than 5 images", () => {
-    sut.addImage("img1.png");
-    sut.addImage("img2.png");
-    sut.addImage("img3.png");
-    sut.addImage("img4.png");
-    sut.addImage("img5.png");
+    ImageUrl.create({ value: "img1.png" });
+    sut.addImage(ImageUrl.create({ value: "img1.png" }));
+    sut.addImage(ImageUrl.create({ value: "img2.png" }));
+    sut.addImage(ImageUrl.create({ value: "img3.png" }));
+    sut.addImage(ImageUrl.create({ value: "img4.png" }));
+    sut.addImage(ImageUrl.create({ value: "img5.png" }));
 
-    expect(() => sut.addImage("img6.png")).toThrowError(
-      "It is not possible to add more images",
-    );
+    expect(() =>
+      sut.addImage(ImageUrl.create({ value: "img6.png" })),
+    ).toThrowError("It is not possible to add more images");
   });
 
   it("should remove an existing image", () => {
-    sut.addImage("img1.png");
-    sut.removeImage("img1.png");
+    const image = ImageUrl.create({ value: "img1.png" });
+    sut.addImage(image);
+    sut.removeImage(image);
 
-    expect(sut.images.includes("img1.png")).toBe(false);
+    expect(sut.images.includes(image)).toBe(false);
   });
 
   it("should do nothing if image does not exist", () => {
     const beforeImages = sut.images;
-    sut.removeImage("nonexistent.png");
+
+    const nonexistent = ImageUrl.create({ value: "nonexistent.png" });
+
+    sut.removeImage(nonexistent);
 
     expect(sut.images).toEqual(beforeImages);
   });

@@ -1,13 +1,14 @@
 import { Entity } from "@/shared/domain/entities/Entity";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { PostContent } from "../value-objects/PostContent";
+import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
 
 type PostPros = {
   authorId: Id<"UserId">;
   commentIds: Id<"CommentId">[];
   likeIds: Id<"LikeId">[];
   content: PostContent;
-  images: string[];
+  images: ImageUrl[];
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -33,7 +34,7 @@ export class Post extends Entity<"PostId"> {
     return [...this.props.likeIds];
   }
 
-  get images(): string[] {
+  get images(): ImageUrl[] {
     return [...this.props.images];
   }
 
@@ -48,14 +49,14 @@ export class Post extends Entity<"PostId"> {
     this.touch();
   }
 
-  private updateImages(images: string[]): void {
+  private updateImages(images: ImageUrl[]): void {
     this.props.images = images;
     this.touch();
   }
   //#endregion
 
   //#region add and remove something
-  addImage(image: string): void {
+  addImage(image: ImageUrl): void {
     const MAX_IMAGES = 5;
 
     if (this.props.images.length >= MAX_IMAGES) {
@@ -69,7 +70,7 @@ export class Post extends Entity<"PostId"> {
     this.updateImages(newImages);
   }
 
-  removeImage(image: string): void {
+  removeImage(image: ImageUrl): void {
     const filteredImages = this.props.images.filter(
       (postImage) => postImage != image,
     );
