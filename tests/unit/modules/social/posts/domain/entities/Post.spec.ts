@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { Post } from "@/modules/social/posts/domain/entities/Post";
+import { PostContent } from "@/modules/social/posts/domain/value-objects/PostContent";
 
 const makePost = (createAt?: Date, updatedAt?: Date) => {
   return new (class extends Post {
@@ -9,7 +10,7 @@ const makePost = (createAt?: Date, updatedAt?: Date) => {
         authorId: Id.generate<"UserId">(),
         commentIds: [],
         likeIds: [],
-        content: "Initial content",
+        content: PostContent.create({ value: "Initial content" }),
         images: [],
         createdAt: createAt ?? new Date(),
         updatedAt: updatedAt ?? createAt ?? new Date(),
@@ -33,7 +34,7 @@ describe("Post entity unit tests", () => {
   it("should expose getters correctly", () => {
     expect(sut.id).toBeInstanceOf(Id);
     expect(sut.authorId).toBeInstanceOf(Id);
-    expect(sut.content).toBe("Initial content");
+    expect(sut.content.value).toBe("Initial content");
     expect(sut.commentIds).toBeInstanceOf(Array<Id<"CommentId">>);
     expect(sut.likeIds).toBeInstanceOf(Array<Id<"LikeId">>);
     expect(sut.images).toBeInstanceOf(Array<string>);
@@ -73,9 +74,12 @@ describe("Post entity unit tests", () => {
     const oldUpdatedAt = sut.updatedAt;
 
     vi.advanceTimersByTime(10);
-    sut.updateContent("Updated content");
 
-    expect(sut.content).toBe("Updated content");
+    const updatedContent = PostContent.create({ value: "Updated content" });
+
+    sut.updateContent(updatedContent);
+
+    expect(sut.content).toBe(updatedContent);
     expect(sut.updatedAt.getTime()).toBeGreaterThan(oldUpdatedAt.getTime());
   });
 
@@ -116,7 +120,8 @@ describe("Post entity unit tests", () => {
   });
 
   it("should return full content if smaller than maxLength", () => {
-    sut.updateContent("Short content");
+    const shortContent = PostContent.create({ value: "Short content" });
+    sut.updateContent(shortContent);
     expect(sut.contentSummary()).toBe("Short content");
   });
 
@@ -129,9 +134,11 @@ describe("Post entity unit tests", () => {
   });
 
   it("should return trimmed summary with dots if content is larger", () => {
-    sut.updateContent(
-      "This is a very long content for testing summary behavior.",
-    );
+    const longContent = PostContent.create({
+      value: "This is a very long content for testing summary behavior.",
+    });
+
+    sut.updateContent(longContent);
 
     const summary = sut.contentSummary(20);
 

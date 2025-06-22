@@ -1,11 +1,12 @@
 import { Entity } from "@/shared/domain/entities/Entity";
 import { Id } from "@/shared/domain/value-objects/Id";
+import { PostContent } from "../value-objects/PostContent";
 
 type PostPros = {
   authorId: Id<"UserId">;
   commentIds: Id<"CommentId">[];
   likeIds: Id<"LikeId">[];
-  content: string;
+  content: PostContent;
   images: string[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -36,13 +37,13 @@ export class Post extends Entity<"PostId"> {
     return [...this.props.images];
   }
 
-  get content(): string {
+  get content(): PostContent {
     return this.props.content;
   }
   //#endregion
 
   //#region update somethig
-  updateContent(content: string): void {
+  updateContent(content: PostContent): void {
     this.props.content = content;
     this.touch();
   }
@@ -87,7 +88,7 @@ export class Post extends Entity<"PostId"> {
       );
     }
 
-    const content = this.content.trim();
+    const content = this.content.value.trim();
 
     if (content.length <= maxLength) return content;
 
