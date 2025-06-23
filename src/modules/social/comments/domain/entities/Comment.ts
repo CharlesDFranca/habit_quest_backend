@@ -1,10 +1,11 @@
 import { Entity } from "@/shared/domain/entities/Entity";
 import { Id } from "@/shared/domain/value-objects/Id";
+import { CommentContent } from "../value-object/CommentContent";
 
 type CommentProps = {
   authorId: Id<"UserId">;
   postId: Id<"PostId">;
-  content: string;
+  content: CommentContent;
   replyIds: Id<"CommentId">[];
   likeIds: Id<"LikeId">[];
   createdAt?: Date;
@@ -33,7 +34,7 @@ export class Comment extends Entity<"CommentId"> {
     return this.props.postId;
   }
 
-  get content(): string {
+  get content(): CommentContent {
     return this.props.content;
   }
 
@@ -47,7 +48,7 @@ export class Comment extends Entity<"CommentId"> {
   //#endregion
 
   //#region update something methods
-  updateContent(content: string): void {
+  updateContent(content: CommentContent): void {
     this.props.content = content;
     this.touch();
   }
@@ -106,6 +107,16 @@ export class Comment extends Entity<"CommentId"> {
     );
 
     this.updateReplyIds(newReplyIds);
+  }
+  //#endregion
+
+  //#region utils methods
+  contentSummary(maxLength: number = 50): string {
+    const summary = this.content.summary(maxLength);
+
+    const dots = "...";
+
+    return summary.substring(0, maxLength - dots.length).trimEnd() + dots;
   }
   //#endregion
 }

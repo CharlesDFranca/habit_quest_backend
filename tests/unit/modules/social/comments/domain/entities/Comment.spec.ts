@@ -1,4 +1,5 @@
 import { Comment } from "@/modules/social/comments/domain/entities/Comment";
+import { CommentContent } from "@/modules/social/comments/domain/value-object/CommentContent";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
@@ -8,7 +9,7 @@ const makeComment = (createdAt?: Date, updatedAt?: Date) =>
     postId: Id.generate<"PostId">(),
     likeIds: [],
     replyIds: [],
-    content: "Comment content",
+    content: CommentContent.create({ value: "Comment content" }),
     createdAt: createdAt ?? new Date(),
     updatedAt: updatedAt ?? createdAt ?? new Date(),
   });
@@ -32,7 +33,7 @@ describe("Comment entity unit tests", () => {
       expect(sut.postId).toBeInstanceOf(Id);
       expect(sut.likeIds).toBeInstanceOf(Array);
       expect(sut.replyIds).toBeInstanceOf(Array);
-      expect(sut.content).toBe("Comment content");
+      expect(sut.content.value).toBe("Comment content");
     });
 
     it("should return likeIds safely (immutable array)", () => {
@@ -62,7 +63,9 @@ describe("Comment entity unit tests", () => {
 
       vi.advanceTimersByTime(10);
 
-      const updatedContent = "Updated content";
+      const updatedContent = CommentContent.create({
+        value: "Updated content",
+      });
 
       sut.updateContent(updatedContent);
 
@@ -199,6 +202,15 @@ describe("Comment entity unit tests", () => {
 
       expect(sut.createdAt.getTime()).toBe(createdAt.getTime());
       expect(sut.updatedAt.getTime()).toBe(updatedAt.getTime());
+    });
+  });
+
+  describe("Summary", () => {
+    it("should return full content if smaller than maxLength", () => {
+      const shortContent = CommentContent.create({ value: "Short content" });
+
+      sut.updateContent(shortContent);
+      expect(sut.contentSummary()).toBe("Short content...");
     });
   });
 });
