@@ -130,8 +130,9 @@ describe("Post entity unit tests", () => {
 
   it("should return full content if smaller than maxLength", () => {
     const shortContent = PostContent.create({ value: "Short content" });
+
     sut.updateContent(shortContent);
-    expect(sut.contentSummary()).toBe("Short content");
+    expect(sut.contentSummary()).toBe("Short content...");
   });
 
   it("should throw error if maxLength is too small", () => {

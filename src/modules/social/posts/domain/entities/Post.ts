@@ -80,22 +80,12 @@ export class Post extends Entity<"PostId"> {
   //#endregion
 
   //#region utils methods
-  contentSummary(maxLength: number = 20): string {
-    const MIN_LENGTH_FOR_SUMMARY = 10;
-
-    if (maxLength < MIN_LENGTH_FOR_SUMMARY) {
-      throw new Error(
-        `The maximum length must be at least ${MIN_LENGTH_FOR_SUMMARY} to allow for a meaningful summary`,
-      );
-    }
-
-    const content = this.content.value.trim();
-
-    if (content.length <= maxLength) return content;
+  contentSummary(maxLength: number = 200): string {
+    const summary = this.content.summary(maxLength);
 
     const dots = "...";
 
-    return content.substring(0, maxLength - dots.length).trimEnd() + dots;
+    return summary.substring(0, maxLength - dots.length).trimEnd() + dots;
   }
 
   getElapsedTimeSinceCreation(): string {
