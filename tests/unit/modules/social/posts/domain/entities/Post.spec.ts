@@ -9,8 +9,8 @@ const makePost = (createAt?: Date, updatedAt?: Date) => {
     constructor() {
       super(Id.generate<"PostId">(), {
         authorId: Id.generate<"UserId">(),
-        commentIds: [],
-        likeIds: [],
+        commentCount: 0,
+        likeCount: 0,
         content: PostContent.create({ value: "Initial content" }),
         images: [],
         createdAt: createAt ?? new Date(),
@@ -36,29 +36,9 @@ describe("Post entity unit tests", () => {
     expect(sut.id).toBeInstanceOf(Id);
     expect(sut.authorId).toBeInstanceOf(Id);
     expect(sut.content.value).toBe("Initial content");
-    expect(sut.commentIds).toBeInstanceOf(Array<Id<"CommentId">>);
-    expect(sut.likeIds).toBeInstanceOf(Array<Id<"LikeId">>);
+    expect(sut.commentCount).toBe(0);
+    expect(sut.likeCount).toBe(0);
     expect(sut.images).toBeInstanceOf(Array<ImageUrl>);
-  });
-
-  it("should return commentIds safely (immutable array)", () => {
-    const comments = sut.commentIds;
-
-    expect(Array.isArray(comments)).toBeTruthy();
-
-    comments.push(Id.generate<"CommentId">());
-
-    expect(sut.commentIds.length).toBe(0);
-  });
-
-  it("should return likeIds safely (immutable array)", () => {
-    const likes = sut.likeIds;
-
-    expect(Array.isArray(likes)).toBeTruthy();
-
-    likes.push(Id.generate<"LikeId">());
-
-    expect(sut.likeIds.length).toBe(0);
   });
 
   it("should return images safely (immutable array)", () => {

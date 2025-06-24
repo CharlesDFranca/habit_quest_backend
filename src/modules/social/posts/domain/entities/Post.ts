@@ -5,8 +5,8 @@ import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
 
 type PostProps = {
   authorId: Id<"UserId">;
-  commentIds: Id<"CommentId">[];
-  likeIds: Id<"LikeId">[];
+  commentCount: number;
+  likeCount: number;
   content: PostContent;
   images: ImageUrl[];
   createdAt?: Date;
@@ -26,12 +26,12 @@ export class Post extends Entity<"PostId"> {
     return this.props.authorId;
   }
 
-  get commentIds(): Id<"CommentId">[] {
-    return [...this.props.commentIds];
+  get commentCount(): number {
+    return this.props.commentCount;
   }
 
-  get likeIds(): Id<"LikeId">[] {
-    return [...this.props.likeIds];
+  get likeCount(): number {
+    return this.props.likeCount;
   }
 
   get images(): ImageUrl[] {
@@ -48,15 +48,10 @@ export class Post extends Entity<"PostId"> {
     this.props.content = content;
     this.touch();
   }
-
-  private updateImages(images: ImageUrl[]): void {
-    this.props.images = images;
-    this.touch();
-  }
   //#endregion
 
   //#region add and remove something
-  addImage(image: ImageUrl): void {
+  addImage(newImage: ImageUrl): void {
     const MAX_IMAGES = 5;
 
     if (this.props.images.length >= MAX_IMAGES) {
@@ -65,17 +60,15 @@ export class Post extends Entity<"PostId"> {
       );
     }
 
-    const newImages = [...this.props.images, image];
-
-    this.updateImages(newImages);
+    this.props.images.push(newImage);
+    this.touch();
   }
 
   removeImage(image: ImageUrl): void {
-    const filteredImages = this.props.images.filter(
+    this.props.images = this.props.images.filter(
       (postImage) => !postImage.isEqual(image),
     );
-
-    this.updateImages(filteredImages);
+    this.touch();
   }
   //#endregion
 
