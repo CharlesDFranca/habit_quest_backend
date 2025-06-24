@@ -210,7 +210,7 @@ describe("Comment entity unit tests", () => {
       const shortContent = CommentContent.create({ value: "Short content" });
 
       sut.updateContent(shortContent);
-      expect(sut.contentSummary()).toBe("Short content...");
+      expect(sut.contentSummary()).toBe("Short content");
     });
   });
 });

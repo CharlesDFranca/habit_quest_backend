@@ -114,9 +114,7 @@ export class Comment extends Entity<"CommentId"> {
   contentSummary(maxLength: number = 50): string {
     const summary = this.content.summary(maxLength);
 
-    const dots = "...";
-
-    return summary.substring(0, maxLength - dots.length).trimEnd() + dots;
+    return summary.substring(0, maxLength).trimEnd();
   }
   //#endregion
 }
