@@ -6,8 +6,8 @@ type CommentProps = {
   authorId: Id<"UserId">;
   postId: Id<"PostId">;
   content: CommentContent;
-  replyIds: Id<"CommentId">[];
-  likeIds: Id<"LikeId">[];
+  replyCount: number;
+  likeCount: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -38,12 +38,12 @@ export class Comment extends Entity<"CommentId"> {
     return this.props.content;
   }
 
-  get replyIds(): Id<"CommentId">[] {
-    return [...this.props.replyIds];
+  get replyCount(): number {
+    return this.props.replyCount;
   }
 
-  get likeIds(): Id<"LikeId">[] {
-    return [...this.props.likeIds];
+  get likeCount(): number {
+    return this.props.likeCount;
   }
   //#endregion
 
@@ -53,60 +53,27 @@ export class Comment extends Entity<"CommentId"> {
     this.touch();
   }
 
-  private updateLikeIds(likeIds: Id<"LikeId">[]): void {
-    this.props.likeIds = likeIds;
-    this.touch();
-  }
-
-  private updateReplyIds(replyIds: Id<"CommentId">[]): void {
-    this.props.replyIds = replyIds;
-    this.touch();
-  }
   //#endregion
 
   //#region add and remove something methods
-  addLikeId(likeId: Id<"LikeId">): void {
-    const alreadLike = this.props.likeIds.some((commentLikeId) =>
-      commentLikeId.isEqual(likeId),
-    );
-
-    if (alreadLike) return;
-
-    const newLikeIds = [...this.props.likeIds, likeId];
-
-    this.updateLikeIds(newLikeIds);
+  addLikeId(): void {
+    this.props.likeCount += 1;
+    this.touch();
   }
 
-  removeLikeId(likeId: Id<"LikeId">): void {
-    if (!this.props.likeIds.includes(likeId)) return;
-
-    const newLikeIds = this.props.likeIds.filter(
-      (commentLikeId) => !commentLikeId.isEqual(likeId),
-    );
-
-    this.updateLikeIds(newLikeIds);
+  removeLikeId(): void {
+    this.props.likeCount -= 1;
+    this.touch();
   }
 
-  addReplyId(replyId: Id<"CommentId">): void {
-    const alreadyReplied = this.props.replyIds.some((commentReplyId) =>
-      commentReplyId.isEqual(replyId),
-    );
-
-    if (alreadyReplied) return;
-
-    const newReplyIds = [...this.props.replyIds, replyId];
-
-    this.updateReplyIds(newReplyIds);
+  addReplyId(): void {
+    this.props.replyCount += 1;
+    this.touch();
   }
 
-  removeReplyId(replyId: Id<"CommentId">): void {
-    if (!this.props.replyIds.includes(replyId)) return;
-
-    const newReplyIds = this.props.replyIds.filter(
-      (commentReplyId) => !commentReplyId.isEqual(replyId),
-    );
-
-    this.updateReplyIds(newReplyIds);
+  removeReplyId(): void {
+    this.props.replyCount -= 1;
+    this.touch();
   }
   //#endregion
 
