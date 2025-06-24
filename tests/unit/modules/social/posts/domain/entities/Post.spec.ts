@@ -132,7 +132,7 @@ describe("Post entity unit tests", () => {
     const shortContent = PostContent.create({ value: "Short content" });
 
     sut.updateContent(shortContent);
-    expect(sut.contentSummary()).toBe("Short content...");
+    expect(sut.contentSummary()).toBe("Short content");
   });
 
   it("should throw error if maxLength is too small", () => {
@@ -143,7 +143,7 @@ describe("Post entity unit tests", () => {
     );
   });
 
-  it("should return trimmed summary with dots if content is larger", () => {
+  it("should return trimmed summary if content is larger", () => {
     const longContent = PostContent.create({
       value: "This is a very long content for testing summary behavior.",
     });
@@ -152,34 +152,6 @@ describe("Post entity unit tests", () => {
 
     const summary = sut.contentSummary(20);
 
-    expect(summary.endsWith("...")).toBeTruthy();
     expect(summary.length).toBeLessThanOrEqual(20);
-  });
-
-  it("should return 'Right now' for very recent sut", () => {
-    expect(sut.getElapsedTimeSinceCreation()).toBe("Right now");
-  });
-
-  it("should return minutes ago", () => {
-    const sut = makePost(new Date(Date.now() - 5 * 60 * 1000));
-    expect(sut.getElapsedTimeSinceCreation()).toBe("5 minutes ago");
-  });
-
-  it("should return hours ago", () => {
-    const sut = makePost(new Date(Date.now() - 2 * 60 * 60 * 1000));
-
-    expect(sut.getElapsedTimeSinceCreation()).toBe("2 hours ago");
-  });
-
-  it("should return days ago", () => {
-    const sut = makePost(new Date(Date.now() - 3 * 24 * 60 * 60 * 1000));
-
-    expect(sut.getElapsedTimeSinceCreation()).toBe("3 days ago");
-  });
-
-  it("should return years ago", () => {
-    const sut = makePost(new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000));
-
-    expect(sut.getElapsedTimeSinceCreation()).toBe("2 years ago");
   });
 });

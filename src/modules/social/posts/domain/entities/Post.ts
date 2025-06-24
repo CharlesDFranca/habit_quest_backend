@@ -3,7 +3,7 @@ import { Id } from "@/shared/domain/value-objects/Id";
 import { PostContent } from "../value-objects/PostContent";
 import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
 
-type PostPros = {
+type PostProps = {
   authorId: Id<"UserId">;
   commentIds: Id<"CommentId">[];
   likeIds: Id<"LikeId">[];
@@ -16,7 +16,7 @@ type PostPros = {
 export class Post extends Entity<"PostId"> {
   protected constructor(
     private readonly postId: Id<"PostId">,
-    private readonly props: PostPros,
+    private readonly props: PostProps,
   ) {
     super(postId, props.createdAt, props.updatedAt);
   }
@@ -83,43 +83,7 @@ export class Post extends Entity<"PostId"> {
   contentSummary(maxLength: number = 200): string {
     const summary = this.content.summary(maxLength);
 
-    const dots = "...";
-
-    return summary.substring(0, maxLength - dots.length).trimEnd() + dots;
+    return summary.substring(0, maxLength).trimEnd();
   }
-
-  getElapsedTimeSinceCreation(): string {
-    const now = new Date();
-    const diffMs = now.getTime() - this.createdAt.getTime();
-
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-
-    const ONE_MINUTE = 1;
-    const MINUTES_IN_ONE_HOUR = 60;
-    const HOURS_IN_ONE_DAY = 24;
-    const DAYS_IN_ONE_YEAR = 365;
-
-    if (diffMinutes < ONE_MINUTE) {
-      return "Right now";
-    }
-
-    if (diffMinutes < MINUTES_IN_ONE_HOUR) {
-      return `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"} ago`;
-    }
-
-    const diffHours = Math.floor(diffMinutes / MINUTES_IN_ONE_HOUR);
-    if (diffHours < HOURS_IN_ONE_DAY) {
-      return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
-    }
-
-    const diffDays = Math.floor(diffHours / HOURS_IN_ONE_DAY);
-    if (diffDays < DAYS_IN_ONE_YEAR) {
-      return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
-    }
-
-    const diffYears = Math.floor(diffDays / DAYS_IN_ONE_YEAR);
-    return `${diffYears} year${diffYears === 1 ? "" : "s"} ago`;
-  }
-
   //#endregion
 }
