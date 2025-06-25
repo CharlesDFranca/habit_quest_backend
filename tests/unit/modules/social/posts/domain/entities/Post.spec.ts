@@ -3,21 +3,21 @@ import { Id } from "@/shared/domain/value-objects/Id";
 import { Post } from "@/modules/social/posts/domain/entities/Post";
 import { PostContent } from "@/modules/social/posts/domain/value-objects/PostContent";
 import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
+import { Counter } from "@/shared/domain/value-objects/Counter";
 
 const makePost = (createAt?: Date, updatedAt?: Date) => {
-  return new (class extends Post {
-    constructor() {
-      super(Id.generate<"PostId">(), {
-        authorId: Id.generate<"UserId">(),
-        commentCount: 0,
-        likeCount: 0,
-        content: PostContent.create({ value: "Initial content" }),
-        images: [],
-        createdAt: createAt ?? new Date(),
-        updatedAt: updatedAt ?? createAt ?? new Date(),
-      });
-    }
-  })();
+  return Post.create(
+    {
+      authorId: Id.generate<"UserId">(),
+      content: PostContent.create({ value: "Initial content" }),
+      commentCount: Counter.create({ value: 0 }),
+      likeCount: Counter.create({ value: 0 }),
+      images: [],
+      createdAt: createAt ?? new Date(),
+      updatedAt: updatedAt ?? createAt ?? new Date(),
+    },
+    Id.generate<"PostId">(),
+  );
 };
 
 describe("Post entity unit tests", () => {
@@ -36,8 +36,8 @@ describe("Post entity unit tests", () => {
     expect(sut.id).toBeInstanceOf(Id);
     expect(sut.authorId).toBeInstanceOf(Id);
     expect(sut.content.value).toBe("Initial content");
-    expect(sut.commentCount).toBe(0);
-    expect(sut.likeCount).toBe(0);
+    expect(sut.commentCount.value).toBe(0);
+    expect(sut.likeCount.value).toBe(0);
     expect(sut.images).toBeInstanceOf(Array<ImageUrl>);
   });
 
@@ -133,5 +133,89 @@ describe("Post entity unit tests", () => {
     const summary = sut.contentSummary(20);
 
     expect(summary.length).toBeLessThanOrEqual(20);
+  });
+
+  it("shouldn't update content if is the same", () => {
+    const currentContent = sut.content;
+    const oulUpdatedAt = sut.updatedAt;
+
+    sut.updateContent(currentContent);
+
+    expect(sut.content).toBe(currentContent);
+    expect(sut.updatedAt.getTime()).toBe(oulUpdatedAt.getTime());
+  });
+
+  it("should increment likeCount by one", () => {
+    expect(sut.likeCount.value).toBe(0);
+
+    sut.increaseLikeCount();
+
+    expect(sut.likeCount.value).toBe(1);
+  });
+
+  it("should increment likeCount by 10", () => {
+    expect(sut.likeCount.value).toBe(0);
+
+    sut.increaseLikeCount(10);
+
+    expect(sut.likeCount.value).toBe(10);
+  });
+
+  it("should decrement likeCount by one", () => {
+    sut.increaseLikeCount();
+
+    expect(sut.likeCount.value).toBe(1);
+
+    sut.decreaseLikeCount();
+
+    expect(sut.likeCount.value).toBe(0);
+  });
+
+  it("should decrement likeCount by 5", () => {
+    sut.increaseLikeCount(10);
+
+    expect(sut.likeCount.value).toBe(10);
+
+    sut.decreaseLikeCount(5);
+
+    expect(sut.likeCount.value).toBe(5);
+  });
+
+  it("should throw an error if decrement amount greater than likeCount have", () => {
+    sut.increaseLikeCount(10);
+
+    expect(sut.likeCount.value).toBe(10);
+
+    expect(() => sut.decreaseLikeCount(20)).toThrowError(
+      "It is not possible to decrement if the value to be subtracted is greater than the current value of the counter",
+    );
+  });
+
+  it("should decrement commentCount by one", () => {
+    sut.increaseCommentCount();
+
+    expect(sut.commentCount.value).toBe(1);
+
+    sut.decreaseCommentCount();
+
+    expect(sut.commentCount.value).toBe(0);
+  });
+
+  it("should decrement commentCount by 5", () => {
+    sut.increaseCommentCount(10);
+
+    expect(sut.commentCount.value).toBe(10);
+
+    sut.decreaseCommentCount(5);
+
+    expect(sut.commentCount.value).toBe(5);
+  });
+
+  it("should throw an error if decrement amount greater than commentCount have", () => {
+    sut.increaseCommentCount(10);
+
+    expect(sut.commentCount.value).toBe(10);
+
+    expect(() => sut.decreaseCommentCount(20)).toThrowError();
   });
 });

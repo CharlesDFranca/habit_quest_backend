@@ -2,11 +2,12 @@ import { Entity } from "@/shared/domain/entities/Entity";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { PostContent } from "../value-objects/PostContent";
 import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
+import { Counter } from "@/shared/domain/value-objects/Counter";
 
 type PostProps = {
   authorId: Id<"UserId">;
-  commentCount: number;
-  likeCount: number;
+  commentCount: Counter;
+  likeCount: Counter;
   content: PostContent;
   images: ImageUrl[];
   createdAt?: Date;
@@ -21,16 +22,25 @@ export class Post extends Entity<"PostId"> {
     super(postId, props.createdAt, props.updatedAt);
   }
 
+  static create(props: PostProps, _id?: Id<"PostId">): Post {
+    const id = _id ?? Id.generate<"PostId">();
+    return new Post(id, {
+      ...props,
+      likeCount: props.likeCount ?? Counter.create({ value: 0 }),
+      commentCount: props.commentCount ?? Counter.create({ value: 0 }),
+    });
+  }
+
   //#region getters methods
   get authorId(): Id<"UserId"> {
     return this.props.authorId;
   }
 
-  get commentCount(): number {
+  get commentCount(): Counter {
     return this.props.commentCount;
   }
 
-  get likeCount(): number {
+  get likeCount(): Counter {
     return this.props.likeCount;
   }
 
@@ -45,6 +55,7 @@ export class Post extends Entity<"PostId"> {
 
   //#region update somethig
   updateContent(content: PostContent): void {
+    if (this.content.isEqual(content)) return;
     this.props.content = content;
     this.touch();
   }
@@ -79,4 +90,28 @@ export class Post extends Entity<"PostId"> {
     return summary.substring(0, maxLength).trimEnd();
   }
   //#endregion
+
+  increaseLikeCount(amount: number = 1): void {
+    this.props.likeCount = amount
+      ? this.likeCount.incrementBy(amount)
+      : this.likeCount.incrementByOne();
+  }
+
+  decreaseLikeCount(amount: number = 1): void {
+    this.props.likeCount = amount
+      ? this.likeCount.decrementBy(amount)
+      : this.likeCount.decrementByOne();
+  }
+
+  increaseCommentCount(amount: number = 1): void {
+    this.props.commentCount = amount
+      ? this.commentCount.incrementBy(amount)
+      : this.commentCount.incrementByOne();
+  }
+
+  decreaseCommentCount(amount: number = 1): void {
+    this.props.commentCount = amount
+      ? this.commentCount.decrementBy(amount)
+      : this.commentCount.decrementByOne();
+  }
 }
