@@ -19,7 +19,7 @@ export class Like extends Entity<"LikeId"> {
     super(likeId, props.createdAt, props.updatedAt);
   }
 
-  static create(props: LikeProps, _id: Id<"LikeId">): Like {
+  static create(props: LikeProps, _id?: Id<"LikeId">): Like {
     const id = _id ?? Id.generate<"LikeId">();
 
     return new Like(id, props);
