@@ -5,7 +5,13 @@ import { PostContent } from "@/modules/social/posts/domain/value-objects/PostCon
 import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
 import { Counter } from "@/shared/domain/value-objects/Counter";
 
-const makePost = (createAt?: Date, updatedAt?: Date) => {
+type MakePostProps = {
+  createAt?: Date;
+  updatedAt?: Date;
+  isPinned?: boolean;
+};
+
+const makePost = (props?: MakePostProps) => {
   return Post.create(
     {
       authorId: Id.generate<"UserId">(),
@@ -13,8 +19,9 @@ const makePost = (createAt?: Date, updatedAt?: Date) => {
       commentCount: Counter.create({ value: 0 }),
       likeCount: Counter.create({ value: 0 }),
       images: [],
-      createdAt: createAt ?? new Date(),
-      updatedAt: updatedAt ?? createAt ?? new Date(),
+      isPinned: props ? props.isPinned : false,
+      createdAt: props ? props.createAt : new Date(),
+      updatedAt: props ? (props.updatedAt ?? props.createAt) : new Date(),
     },
     Id.generate<"PostId">(),
   );
@@ -35,6 +42,7 @@ describe("Post entity unit tests", () => {
   it("should expose getters correctly", () => {
     expect(sut.id).toBeInstanceOf(Id);
     expect(sut.authorId).toBeInstanceOf(Id);
+    expect(sut.isPinned).toBe(false);
     expect(sut.content.value).toBe("Initial content");
     expect(sut.commentCount.value).toBe(0);
     expect(sut.likeCount.value).toBe(0);
@@ -78,7 +86,6 @@ describe("Post entity unit tests", () => {
   });
 
   it("should not allow more than 5 images", () => {
-    ImageUrl.create({ value: "img1.png" });
     sut.addImage(ImageUrl.create({ value: "img1.png" }));
     sut.addImage(ImageUrl.create({ value: "img2.png" }));
     sut.addImage(ImageUrl.create({ value: "img3.png" }));
@@ -217,5 +224,19 @@ describe("Post entity unit tests", () => {
     expect(sut.commentCount.value).toBe(10);
 
     expect(() => sut.decreaseCommentCount(20)).toThrowError();
+  });
+
+  it("should create a Post with pinned true", () => {
+    const sut = makePost({ isPinned: true });
+
+    expect(sut.isPinned).toBe(true);
+  });
+
+  it("should toggle the pinned", () => {
+    expect(sut.isPinned).toBe(false);
+
+    sut.togglePinned();
+
+    expect(sut.isPinned).toBe(true);
   });
 });

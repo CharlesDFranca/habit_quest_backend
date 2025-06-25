@@ -10,6 +10,7 @@ type PostProps = {
   likeCount: Counter;
   content: PostContent;
   images: ImageUrl[];
+  isPinned?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -28,6 +29,7 @@ export class Post extends Entity<"PostId"> {
       ...props,
       likeCount: props.likeCount ?? Counter.create({ value: 0 }),
       commentCount: props.commentCount ?? Counter.create({ value: 0 }),
+      isPinned: props.isPinned ?? false,
     });
   }
 
@@ -50,6 +52,10 @@ export class Post extends Entity<"PostId"> {
 
   get content(): PostContent {
     return this.props.content;
+  }
+
+  get isPinned(): boolean {
+    return this.props.isPinned!;
   }
   //#endregion
 
@@ -89,7 +95,6 @@ export class Post extends Entity<"PostId"> {
 
     return summary.substring(0, maxLength).trimEnd();
   }
-  //#endregion
 
   increaseLikeCount(amount: number = 1): void {
     this.props.likeCount = amount
@@ -118,4 +123,10 @@ export class Post extends Entity<"PostId"> {
       : this.commentCount.decrementByOne();
     this.touch();
   }
+
+  togglePinned(): void {
+    this.props.isPinned = !this.isPinned;
+    this.touch();
+  }
+  //#endregion
 }
