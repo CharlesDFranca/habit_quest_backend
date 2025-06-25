@@ -11,6 +11,7 @@ type PostProps = {
   content: PostContent;
   images: ImageUrl[];
   isPinned?: boolean;
+  isPrivate?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -30,6 +31,7 @@ export class Post extends Entity<"PostId"> {
       likeCount: props.likeCount ?? Counter.create({ value: 0 }),
       commentCount: props.commentCount ?? Counter.create({ value: 0 }),
       isPinned: props.isPinned ?? false,
+      isPrivate: props.isPrivate ?? false,
     });
   }
 
@@ -56,6 +58,10 @@ export class Post extends Entity<"PostId"> {
 
   get isPinned(): boolean {
     return this.props.isPinned!;
+  }
+
+  get isPrivate(): boolean {
+    return this.props.isPrivate!;
   }
   //#endregion
 
@@ -126,6 +132,11 @@ export class Post extends Entity<"PostId"> {
 
   togglePinned(): void {
     this.props.isPinned = !this.isPinned;
+    this.touch();
+  }
+
+  togglePrivacy(): void {
+    this.props.isPrivate = !this.isPrivate;
     this.touch();
   }
   //#endregion

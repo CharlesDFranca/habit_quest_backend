@@ -9,6 +9,7 @@ type MakePostProps = {
   createAt?: Date;
   updatedAt?: Date;
   isPinned?: boolean;
+  isPrivate?: boolean;
 };
 
 const makePost = (props?: MakePostProps) => {
@@ -20,6 +21,7 @@ const makePost = (props?: MakePostProps) => {
       likeCount: Counter.create({ value: 0 }),
       images: [],
       isPinned: props ? props.isPinned : false,
+      isPrivate: props ? props.isPrivate : false,
       createdAt: props ? props.createAt : new Date(),
       updatedAt: props ? (props.updatedAt ?? props.createAt) : new Date(),
     },
@@ -43,6 +45,7 @@ describe("Post entity unit tests", () => {
     expect(sut.id).toBeInstanceOf(Id);
     expect(sut.authorId).toBeInstanceOf(Id);
     expect(sut.isPinned).toBe(false);
+    expect(sut.isPrivate).toBe(false);
     expect(sut.content.value).toBe("Initial content");
     expect(sut.commentCount.value).toBe(0);
     expect(sut.likeCount.value).toBe(0);
@@ -238,5 +241,19 @@ describe("Post entity unit tests", () => {
     sut.togglePinned();
 
     expect(sut.isPinned).toBe(true);
+  });
+
+  it("should toggle the privacy", () => {
+    expect(sut.isPrivate).toBe(false);
+
+    sut.togglePrivacy();
+
+    expect(sut.isPrivate).toBe(true);
+  });
+
+  it("should create a Post with privacy true", () => {
+    const sut = makePost({ isPrivate: true });
+
+    expect(sut.isPrivate).toBe(true);
   });
 });
