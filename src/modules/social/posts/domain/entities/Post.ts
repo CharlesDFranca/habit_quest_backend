@@ -95,23 +95,27 @@ export class Post extends Entity<"PostId"> {
     this.props.likeCount = amount
       ? this.likeCount.incrementBy(amount)
       : this.likeCount.incrementByOne();
+    this.touch();
   }
 
   decreaseLikeCount(amount: number = 1): void {
     this.props.likeCount = amount
       ? this.likeCount.decrementBy(amount)
       : this.likeCount.decrementByOne();
+    this.touch();
   }
 
   increaseCommentCount(amount: number = 1): void {
     this.props.commentCount = amount
       ? this.commentCount.incrementBy(amount)
       : this.commentCount.incrementByOne();
+    this.touch();
   }
 
   decreaseCommentCount(amount: number = 1): void {
     this.props.commentCount = amount
       ? this.commentCount.decrementBy(amount)
       : this.commentCount.decrementByOne();
+    this.touch();
   }
 }
