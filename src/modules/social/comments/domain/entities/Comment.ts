@@ -1,13 +1,14 @@
 import { Entity } from "@/shared/domain/entities/Entity";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { CommentContent } from "../value-object/CommentContent";
+import { Counter } from "@/shared/domain/value-objects/Counter";
 
 type CommentProps = {
   authorId: Id<"UserId">;
   postId: Id<"PostId">;
   content: CommentContent;
-  replyCount: number;
-  likeCount: number;
+  replyCount: Counter;
+  likeCount: Counter;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -38,11 +39,11 @@ export class Comment extends Entity<"CommentId"> {
     return this.props.content;
   }
 
-  get replyCount(): number {
+  get replyCount(): Counter {
     return this.props.replyCount;
   }
 
-  get likeCount(): number {
+  get likeCount(): Counter {
     return this.props.likeCount;
   }
   //#endregion
@@ -56,23 +57,31 @@ export class Comment extends Entity<"CommentId"> {
   //#endregion
 
   //#region add and remove something methods
-  addLikeId(): void {
-    this.props.likeCount += 1;
+  increaseLikeCount(amount?: number): void {
+    this.props.likeCount = amount
+      ? this.likeCount.incrementBy(amount)
+      : this.likeCount.incrementByOne();
     this.touch();
   }
 
-  removeLikeId(): void {
-    this.props.likeCount -= 1;
+  decreaseLikeCount(amount?: number): void {
+    this.props.likeCount = amount
+      ? this.likeCount.decrementBy(amount)
+      : this.likeCount.decrementByOne();
     this.touch();
   }
 
-  addReplyId(): void {
-    this.props.replyCount += 1;
+  increaseReplyCount(amount?: number): void {
+    this.props.replyCount = amount
+      ? this.replyCount.incrementBy(amount)
+      : this.replyCount.incrementByOne();
     this.touch();
   }
 
-  removeReplyId(): void {
-    this.props.replyCount -= 1;
+  decreaseReplyCount(amount?: number): void {
+    this.props.replyCount = amount
+      ? this.replyCount.decrementBy(amount)
+      : this.replyCount.decrementByOne();
     this.touch();
   }
   //#endregion

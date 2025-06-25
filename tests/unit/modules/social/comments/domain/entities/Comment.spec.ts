@@ -1,5 +1,6 @@
 import { Comment } from "@/modules/social/comments/domain/entities/Comment";
 import { CommentContent } from "@/modules/social/comments/domain/value-object/CommentContent";
+import { Counter } from "@/shared/domain/value-objects/Counter";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
@@ -7,8 +8,8 @@ const makeComment = (createdAt?: Date, updatedAt?: Date) =>
   Comment.create({
     authorId: Id.generate<"UserId">(),
     postId: Id.generate<"PostId">(),
-    likeCount: 0,
-    replyCount: 0,
+    likeCount: Counter.create({ value: 0 }),
+    replyCount: Counter.create({ value: 0 }),
     content: CommentContent.create({ value: "Comment content" }),
     createdAt: createdAt ?? new Date(),
     updatedAt: updatedAt ?? createdAt ?? new Date(),
@@ -31,8 +32,8 @@ describe("Comment entity unit tests", () => {
       expect(sut.id).toBeInstanceOf(Id);
       expect(sut.authorId).toBeInstanceOf(Id);
       expect(sut.postId).toBeInstanceOf(Id);
-      expect(sut.likeCount).toBe(0);
-      expect(sut.likeCount).toBe(0);
+      expect(sut.likeCount.value).toBe(0);
+      expect(sut.replyCount.value).toBe(0);
       expect(sut.content.value).toBe("Comment content");
     });
 
@@ -58,21 +59,21 @@ describe("Comment entity unit tests", () => {
         const oldUpdatedAt = sut.updatedAt;
 
         vi.advanceTimersByTime(10);
-        sut.addLikeId();
+        sut.increaseLikeCount();
 
-        expect(sut.likeCount).toBe(1);
+        expect(sut.likeCount.value).toBe(1);
         expect(sut.updatedAt.getTime()).toBeGreaterThan(oldUpdatedAt.getTime());
       });
 
       it("should remove a like if it exists", () => {
         const oldUpdatedAt = sut.updatedAt;
 
-        sut.addLikeId();
-        expect(sut.likeCount).toBe(1);
+        sut.increaseLikeCount();
+        expect(sut.likeCount.value).toBe(1);
         vi.advanceTimersByTime(10);
-        sut.removeLikeId();
+        sut.decreaseLikeCount();
 
-        expect(sut.likeCount).toBe(0);
+        expect(sut.likeCount.value).toBe(0);
         expect(sut.updatedAt.getTime()).toBeGreaterThan(oldUpdatedAt.getTime());
       });
 
@@ -81,9 +82,9 @@ describe("Comment entity unit tests", () => {
           const oldUpdatedAt = sut.updatedAt;
 
           vi.advanceTimersByTime(10);
-          sut.addReplyId();
+          sut.increaseReplyCount();
 
-          expect(sut.replyCount).toBe(1);
+          expect(sut.replyCount.value).toBe(1);
           expect(sut.updatedAt.getTime()).toBeGreaterThan(
             oldUpdatedAt.getTime(),
           );
@@ -92,12 +93,12 @@ describe("Comment entity unit tests", () => {
         it("should remove a reply if it exists", () => {
           const oldUpdatedAt = sut.updatedAt;
 
-          sut.addReplyId();
-          expect(sut.replyCount).toBe(1);
+          sut.increaseReplyCount();
+          expect(sut.replyCount.value).toBe(1);
           vi.advanceTimersByTime(10);
-          sut.removeReplyId();
+          sut.decreaseReplyCount();
 
-          expect(sut.replyCount).toBe(0);
+          expect(sut.replyCount.value).toBe(0);
           expect(sut.updatedAt.getTime()).toBeGreaterThan(
             oldUpdatedAt.getTime(),
           );
