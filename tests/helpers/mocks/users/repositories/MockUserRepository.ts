@@ -4,18 +4,19 @@ import { Alias } from "@/shared/domain/value-objects/Alias";
 import { fakeUsersArray } from "../fakes/FakeUsersArray";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { FakeUserFactory } from "../fakes/FakeUserFactory";
+import { Email } from "@/modules/users/domain/value-objects/Email";
 
 const fixedUsers = [
   FakeUserFactory.createUser({
     alias: "ToBeError",
-    email: "email@domain.com",
+    email: "emailToBeError@domain.com",
     name: "Name",
     password: "(Pass1234)",
   }),
   FakeUserFactory.createUser(
     {
       alias: "ToBePass",
-      email: "email@domain.com",
+      email: "emailToBePass@domain.com",
       name: "Name",
       password: "(Pass1234)",
     },
@@ -30,6 +31,16 @@ export class MockUserRepository implements IUserRepository {
     const fakeUsers = [...fakeUsersArray, ...fixedUsers];
 
     const user = fakeUsers.find((user) => user.alias.isEqual(alias));
+
+    if (!user) return null;
+
+    return user;
+  }
+
+  async findUserByEmail(email: Email): Promise<User | null> {
+    const fakeUsers = [...fakeUsersArray, ...fixedUsers];
+
+    const user = fakeUsers.find((user) => user.email.isEqual(email));
 
     if (!user) return null;
 
