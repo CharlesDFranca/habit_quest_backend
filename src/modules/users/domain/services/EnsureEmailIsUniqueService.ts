@@ -1,8 +1,9 @@
 import { Id } from "@/shared/domain/value-objects/Id";
 import { IUserRepository } from "../repositories/IUserRepository";
 import { Email } from "../value-objects/Email";
+import { IEnsureEmailIsUniqueService } from "./interfaces/IEnsureEmailIsUniqueService";
 
-export class EnsureEmailIsUniqueService {
+export class EnsureEmailIsUniqueService implements IEnsureEmailIsUniqueService {
   constructor(private readonly userRepository: IUserRepository) {}
 
   async assertEmailIsUnique(email: Email, userId: Id<"UserId">): Promise<void> {
