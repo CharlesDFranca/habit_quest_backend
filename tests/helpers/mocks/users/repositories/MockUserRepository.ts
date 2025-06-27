@@ -27,6 +27,11 @@ const fixedUsers = [
 ];
 
 export class MockUserRepository implements IUserRepository {
+  async save(user: User): Promise<User> {
+    fakeUsersArray.push(user);
+    return user;
+  }
+
   async findUserByAlias(alias: Alias): Promise<User | null> {
     const fakeUsers = [...fakeUsersArray, ...fixedUsers];
 
