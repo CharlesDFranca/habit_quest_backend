@@ -6,10 +6,16 @@ import { IEnsureAliasIsUniqueService } from "./interfaces/IEnsureAliasIsUniqueSe
 export class EnsureAliasIsUniqueService implements IEnsureAliasIsUniqueService {
   constructor(private readonly userRepository: IUserRepository) {}
 
-  async assertAliasIsUnique(alias: Alias, userId: Id<"UserId">): Promise<void> {
+  async assertAliasIsUnique(
+    alias: Alias,
+    userIdToIgnore?: Id<"UserId">,
+  ): Promise<void> {
     const aliasAlreadyUsed = await this.userRepository.findUserByAlias(alias);
 
-    if (aliasAlreadyUsed && !aliasAlreadyUsed.id?.isEqual(userId)) {
+    if (
+      aliasAlreadyUsed &&
+      (!userIdToIgnore || !aliasAlreadyUsed.id?.isEqual(userIdToIgnore))
+    ) {
       throw new Error(`Alias already used: ${alias.value}`);
     }
   }

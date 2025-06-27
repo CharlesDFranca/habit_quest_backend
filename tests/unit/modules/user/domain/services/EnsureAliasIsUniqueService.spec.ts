@@ -6,9 +6,7 @@ import { describe, it, expect } from "vitest";
 
 describe("EnsureAliasIsUniqueService unit test", () => {
   const userRepository = new MockUserRepository();
-  const ensureAliasIsUniqueService = new EnsureAliasIsUniqueService(
-    userRepository,
-  );
+  const ensureAliasIsUniqueService = new EnsureAliasIsUniqueService(userRepository);
 
   it("should throw an error if alias already used by another user", async () => {
     const alias = Alias.create({ value: "ToBeError" });
@@ -18,7 +16,7 @@ describe("EnsureAliasIsUniqueService unit test", () => {
 
     await expect(
       ensureAliasIsUniqueService.assertAliasIsUnique(alias, userId),
-    ).rejects.toThrowError();
+    ).rejects.toThrowError("Alias already used: ToBeError");
   });
 
   it("shouldn't throw an error if alias is used by the same user", async () => {
@@ -34,12 +32,17 @@ describe("EnsureAliasIsUniqueService unit test", () => {
 
   it("shouldn't throw an error if alias isn't used by another user", async () => {
     const alias = Alias.create({ value: "non-existent" });
-    const userId = Id.create<"UserId">({
-      value: "370c66b1-c45d-447d-965f-5d1579cb4857",
-    });
 
     await expect(
-      ensureAliasIsUniqueService.assertAliasIsUnique(alias, userId),
+      ensureAliasIsUniqueService.assertAliasIsUnique(alias),
     ).resolves.toBeUndefined();
+  });
+
+  it("should throw an error if alias already used and no userId is provided", async () => {
+    const alias = Alias.create({ value: "ToBeError" });
+
+    await expect(
+      ensureAliasIsUniqueService.assertAliasIsUnique(alias),
+    ).rejects.toThrowError("Alias already used: ToBeError");
   });
 });
