@@ -11,12 +11,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "swagger": "^0.7.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.3",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.5",
