@@ -5,7 +5,7 @@ export abstract class Entity<T extends IdType> {
   private _updatedAt: Date;
 
   constructor(
-    private readonly _id?: Id<T>,
+    private readonly _id: Id<T>,
     _createdAt?: Date,
     _updatedAt?: Date,
   ) {
@@ -21,7 +21,7 @@ export abstract class Entity<T extends IdType> {
     this._updatedAt = _updatedAt ?? new Date();
   }
 
-  get id(): Id<T> | undefined {
+  get id(): Id<T> {
     return this._id;
   }
 
