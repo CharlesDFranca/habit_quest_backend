@@ -1,3 +1,5 @@
+import "reflect-metadata";
+
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { CreateUserUseCase } from "@/modules/users/app/use-cases/CreateUserUseCase";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";

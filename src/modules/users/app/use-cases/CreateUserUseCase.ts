@@ -9,6 +9,7 @@ import { Email } from "../../domain/value-objects/Email";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 import { Password } from "../../domain/value-objects/Password";
 import { Id } from "@/shared/domain/value-objects/Id";
+import { inject, injectable } from "tsyringe";
 
 type CreateUserInput = {
   name: string;
@@ -19,13 +20,18 @@ type CreateUserInput = {
 
 type CreateUserOutput = { userId: Id<"UserId"> };
 
+@injectable()
 export class CreateUserUseCase
   implements IUseCase<CreateUserInput, CreateUserOutput>
 {
   constructor(
+    @inject("UserRepository")
     private readonly userRepository: IUserRepository,
+    @inject("EnsureAliasIsUniqueService")
     private readonly ensureAliasIsUniqueService: IEnsureAliasIsUniqueService,
+    @inject("EnsureEmailIsUniqueService")
     private readonly ensureEmailIsUniqueService: IEnsureEmailIsUniqueService,
+    @inject("HashProvider")
     private readonly hashProvider: IHashProvider,
   ) {}
 

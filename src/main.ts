@@ -1,3 +1,6 @@
+import "reflect-metadata";
+import "@/shared/infra/di/container";
+
 import express from "express";
 import { envConfig } from "./config/EnvConfig";
 

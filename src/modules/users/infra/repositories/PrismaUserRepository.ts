@@ -6,7 +6,9 @@ import { Email } from "../../domain/value-objects/Email";
 import { UserMapper } from "../mappers/UserMapper";
 
 import { prisma } from "@/shared/infra/database/PrismaClient";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class PrismaUserRepository implements IUserRepository {
   async save(user: User): Promise<User> {
     const newUser = await prisma.user.create({
