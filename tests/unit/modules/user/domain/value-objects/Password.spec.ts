@@ -75,4 +75,29 @@ describe("Password value-object unit tests", () => {
       );
     });
   });
+
+  it("should accept hash without validations", () => {
+    const invalidButHashed = "invalid_hash";
+    expect(() =>
+      Password.createFromHash({ value: invalidButHashed }),
+    ).not.toThrow();
+  });
+
+  it("should reject empty hash", () => {
+    expect(() => Password.createFromHash({ value: "" })).toThrowError(
+      "Password cannot be empty",
+    );
+  });
+
+  it("should accept hash that violates complexity rules", () => {
+    const noUppercase = "lowercase1!";
+    const noLowercase = "UPPERCASE1!";
+    const noNumber = "Password!";
+    const noSpecial = "Password1";
+
+    expect(() => Password.createFromHash({ value: noUppercase })).not.toThrow();
+    expect(() => Password.createFromHash({ value: noLowercase })).not.toThrow();
+    expect(() => Password.createFromHash({ value: noNumber })).not.toThrow();
+    expect(() => Password.createFromHash({ value: noSpecial })).not.toThrow();
+  });
 });

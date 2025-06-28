@@ -1,6 +1,6 @@
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
-type PasswordProps = { value: string };
+type PasswordProps = { value: string; isHashed?: boolean };
 
 export class Password extends ValueObject<PasswordProps> {
   protected constructor(protected readonly props: PasswordProps) {
@@ -13,12 +13,18 @@ export class Password extends ValueObject<PasswordProps> {
     return new Password({ value: password });
   }
 
+  static createFromHash(props: PasswordProps): Password {
+    return new Password({ value: props.value, isHashed: true });
+  }
+
   protected validate(props: PasswordProps): boolean {
     const password = props.value;
 
     if (password.length === 0) {
       throw new Error("Password cannot be empty");
     }
+
+    if (props.isHashed) return true;
 
     const MIN_LENGTH = 8;
     const MAX_LENGTH = 20;
