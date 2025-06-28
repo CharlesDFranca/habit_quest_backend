@@ -1,6 +1,5 @@
 import { describe, it, beforeAll, afterAll, expect } from "vitest";
 
-import { PrismaClientSingleton } from "@/shared/infra/database/PrismaClientSingleton";
 import { PrismaUserRepository } from "@/modules/users/infra/repositories/PrismaUserRepository";
 
 import { Name } from "@/shared/domain/value-objects/Name";
@@ -8,8 +7,8 @@ import { Alias } from "@/shared/domain/value-objects/Alias";
 import { Email } from "@/modules/users/domain/value-objects/Email";
 import { Password } from "@/modules/users/domain/value-objects/Password";
 import { User } from "@/modules/users/domain/entities/User";
+import { prisma } from "@/shared/infra/database/PrismaClient";
 
-const prisma = PrismaClientSingleton.getInstance();
 const repository = new PrismaUserRepository();
 
 describe("PrismaUserRepository integration tests", () => {

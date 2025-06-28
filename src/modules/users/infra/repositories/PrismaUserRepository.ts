@@ -3,14 +3,13 @@ import { User } from "../../domain/entities/User";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { Email } from "../../domain/value-objects/Email";
 
-import { PrismaClientSingleton } from "@/shared/infra/database/PrismaClientSingleton";
 import { UserMapper } from "../mappers/UserMapper";
 
-export class PrismaUserRepository implements IUserRepository {
-  private prisma = PrismaClientSingleton.getInstance();
+import { prisma } from "@/shared/infra/database/PrismaClient";
 
+export class PrismaUserRepository implements IUserRepository {
   async save(user: User): Promise<User> {
-    const newUser = await this.prisma.user.create({
+    const newUser = await prisma.user.create({
       data: UserMapper.toPersistence(user),
     });
 
@@ -18,7 +17,7 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async findUserByAlias(alias: Alias): Promise<User | null> {
-    const userExists = await this.prisma.user.findUnique({
+    const userExists = await prisma.user.findUnique({
       where: { alias: alias.value },
     });
 
@@ -28,7 +27,7 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async findUserByEmail(email: Email): Promise<User | null> {
-    const userExists = await this.prisma.user.findUnique({
+    const userExists = await prisma.user.findUnique({
       where: { email: email.value },
     });
 
