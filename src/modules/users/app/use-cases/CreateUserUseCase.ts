@@ -1,12 +1,14 @@
 import { IUseCase } from "@/shared/app/interfaces/IUseCase";
-import { User } from "../../domain/entities/User";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IEnsureAliasIsUniqueService } from "../../domain/services/interfaces/IEnsureAliasIsUniqueService";
 import { IEnsureEmailIsUniqueService } from "../../domain/services/interfaces/IEnsureEmailIsUniqueService";
+import { IHashProvider } from "../interfaces/IHashProvider";
+import { User } from "../../domain/entities/User";
 import { Name } from "@/shared/domain/value-objects/Name";
 import { Email } from "../../domain/value-objects/Email";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 import { Password } from "../../domain/value-objects/Password";
+import { Id } from "@/shared/domain/value-objects/Id";
 
 type CreateUserInput = {
   name: string;
@@ -15,7 +17,7 @@ type CreateUserInput = {
   password: string;
 };
 
-type CreateUserOutput = { userId: string };
+type CreateUserOutput = { userId: Id<"UserId"> };
 
 export class CreateUserUseCase
   implements IUseCase<CreateUserInput, CreateUserOutput>
@@ -24,6 +26,7 @@ export class CreateUserUseCase
     private readonly userRepository: IUserRepository,
     private readonly ensureAliasIsUniqueService: IEnsureAliasIsUniqueService,
     private readonly ensureEmailIsUniqueService: IEnsureEmailIsUniqueService,
+    private readonly hashProvider: IHashProvider,
   ) {}
 
   async execute(input: CreateUserInput): Promise<CreateUserOutput> {
@@ -35,14 +38,14 @@ export class CreateUserUseCase
     await this.ensureEmailIsUniqueService.assertEmailIsUnique(email);
     await this.ensureAliasIsUniqueService.assertAliasIsUnique(alias);
 
-    const user = User.create({ alias, email, name, password });
+    const hashedPassword = await this.hashProvider.hash(password.value);
 
-    if (!user.id) {
-      throw new Error("User id is required");
-    }
+    const passwordHash = Password.createFromHash({ value: hashedPassword });
+
+    const user = User.create({ alias, email, name, password: passwordHash });
 
     await this.userRepository.save(user);
 
-    return { userId: user.id.value };
+    return { userId: user.id };
   }
 }
