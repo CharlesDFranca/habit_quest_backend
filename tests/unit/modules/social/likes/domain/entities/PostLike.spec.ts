@@ -1,15 +1,9 @@
-import { Like } from "@/modules/social/likes/domain/entities/Like";
+import { PostLike } from "@/modules/social/likes/domain/entities/PostLike";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { describe, it, expect } from "vitest";
 
-class StubLike extends Like {
-  constructor() {
-    super(Id.generate<"LikeId">(), { userId: Id.generate<"UserId">() });
-  }
-}
-
-describe("Like entity unit tests", () => {
-  const sut: Like = new StubLike();
+describe("PostLike entity unit tests", () => {
+  const sut: PostLike = PostLike.create({ userId: Id.generate() });
 
   it("should expose getters correctly", () => {
     expect(sut.id).toBeDefined();
