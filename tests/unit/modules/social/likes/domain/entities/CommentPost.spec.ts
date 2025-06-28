@@ -3,7 +3,10 @@ import { Id } from "@/shared/domain/value-objects/Id";
 import { describe, it, expect } from "vitest";
 
 describe("CommentLike entity unit tests", () => {
-  const sut: CommentLike = CommentLike.create({ userId: Id.generate() });
+  const sut: CommentLike = CommentLike.create({
+    userId: Id.generate<"UserId">(),
+    commentId: Id.generate<"CommentId">(),
+  });
 
   it("should expose getters correctly", () => {
     expect(sut.id).toBeDefined();
@@ -11,5 +14,7 @@ describe("CommentLike entity unit tests", () => {
 
     expect(sut.id).toBeInstanceOf(Id);
     expect(sut.userId).toBeInstanceOf(Id);
+
+    expect(sut.commentId).toBeInstanceOf(Id);
   });
 });

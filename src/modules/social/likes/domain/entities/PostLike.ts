@@ -3,6 +3,7 @@ import { Like } from "./Like";
 
 type PostLikeProps = {
   userId: Id<"UserId">;
+  postId: Id<"PostId">;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -23,5 +24,9 @@ export class PostLike extends Like {
     const id = _id ?? Id.generate<"LikeId">();
 
     return new PostLike(id, props);
+  }
+
+  get postId(): Id<"PostId"> {
+    return this.postLikeProps.postId;
   }
 }

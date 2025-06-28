@@ -3,6 +3,7 @@ import { Like } from "./Like";
 
 type CommentLikeProps = {
   userId: Id<"UserId">;
+  commentId: Id<"CommentId">;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -23,5 +24,9 @@ export class CommentLike extends Like {
     const id = _id ?? Id.generate<"LikeId">();
 
     return new CommentLike(id, props);
+  }
+
+  get commentId(): Id<"CommentId"> {
+    return this.commentLikeProps.commentId;
   }
 }
