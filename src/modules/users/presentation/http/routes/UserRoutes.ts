@@ -11,4 +11,8 @@ userRoutes.get("/users/findAlias", (req: Request, res: Response) =>
   UserControllers.findUserByAlias(req, res),
 );
 
+userRoutes.get("/users/findId/:id", (req: Request, res: Response) =>
+  UserControllers.findUserById(req, res),
+);
+
 export { userRoutes };
