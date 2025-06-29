@@ -10,16 +10,18 @@ type MakePostProps = {
   updatedAt?: Date;
   isPinned?: boolean;
   isPrivate?: boolean;
+  images?: ImageUrl[];
 };
 
 const makePost = (props?: MakePostProps) => {
+  const images: ImageUrl[] = [];
   return Post.create(
     {
       authorId: Id.generate<"UserId">(),
       content: PostContent.create({ value: "Initial content" }),
       commentCount: Counter.create({ value: 0 }),
       likeCount: Counter.create({ value: 0 }),
-      images: [],
+      images: props && props?.images ? props.images : images,
       isPinned: props ? props.isPinned : false,
       isPrivate: props ? props.isPrivate : false,
       createdAt: props ? props.createAt : new Date(),
@@ -98,6 +100,23 @@ describe("Post entity unit tests", () => {
     expect(() =>
       sut.addImage(ImageUrl.create({ value: "img6.png" })),
     ).toThrowError("It is not possible to add more images");
+  });
+
+  it("should throw an error if try create a Post with more than 5 images", () => {
+    const image1 = ImageUrl.create({ value: "img1.png" });
+    const image2 = ImageUrl.create({ value: "img2.png" });
+    const image3 = ImageUrl.create({ value: "img3.png" });
+    const image4 = ImageUrl.create({ value: "img4.png" });
+    const image5 = ImageUrl.create({ value: "img5.png" });
+    const image6 = ImageUrl.create({ value: "img6.png" });
+
+    expect(() =>
+      Post.create(
+        makePost({ images: [image1, image2, image3, image4, image5, image6] }),
+      ),
+    ).toThrowError(
+      "It is not possible to create a post with more than 5 images",
+    );
   });
 
   it("should remove an existing image", () => {

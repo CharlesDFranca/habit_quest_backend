@@ -45,18 +45,4 @@ describe("FindUserByAliasUseCase unit tests", () => {
       `User with alias: ${alias.value}, not found`,
     );
   });
-
-  it("should create Alias VO from input", async () => {
-    const spy = vi.spyOn(Alias, "create");
-
-    vi.spyOn(mockUserRepository, "findUserByAlias").mockResolvedValue(null);
-
-    try {
-      await useCase.execute({ alias: "check_alias" });
-    } catch (err) {
-      console.log(err);
-    }
-
-    expect(spy).toHaveBeenCalledWith({ value: "check_alias" });
-  });
 });

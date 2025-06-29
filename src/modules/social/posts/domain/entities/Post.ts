@@ -21,11 +21,20 @@ export class Post extends Entity<"PostId"> {
     private readonly postId: Id<"PostId">,
     private readonly props: PostProps,
   ) {
+    const MAX_IMAGES = 5;
+
+    if (props.images.length > MAX_IMAGES) {
+      throw new Error(
+        "It is not possible to create a post with more than 5 images",
+      );
+    }
+
     super(postId, props.createdAt, props.updatedAt);
   }
 
   static create(props: PostProps, _id?: Id<"PostId">): Post {
     const id = _id ?? Id.generate<"PostId">();
+
     return new Post(id, {
       ...props,
       likeCount: props.likeCount ?? Counter.create({ value: 0 }),
