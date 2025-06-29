@@ -8,16 +8,14 @@ import { Email } from "@/modules/users/domain/value-objects/Email";
 import { Name } from "@/shared/domain/value-objects/Name";
 import { Password } from "@/modules/users/domain/value-objects/Password";
 
-describe("FindUserByAliasUseCase - Unit", () => {
+describe("FindUserByAliasUseCase unit tests", () => {
   let mockUserRepository: IUserRepository;
   let useCase: FindUserByAliasUseCase;
 
   beforeEach(() => {
     mockUserRepository = {
       findUserByAlias: vi.fn(),
-      findUserByEmail: vi.fn(),
-      save: vi.fn(),
-    };
+    } as unknown as IUserRepository;
 
     useCase = new FindUserByAliasUseCase(mockUserRepository);
   });

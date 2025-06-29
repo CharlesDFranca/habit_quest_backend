@@ -9,7 +9,7 @@ import { IHashProvider } from "@/modules/users/app/interfaces/IHashProvider";
 import { Email } from "@/modules/users/domain/value-objects/Email";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 
-describe("CreateUserUseCase", () => {
+describe("CreateUserUseCase unit tests", () => {
   let userRepository: IUserRepository;
   let ensureAliasIsUniqueService: IEnsureAliasIsUniqueService;
   let ensureEmailIsUniqueService: IEnsureEmailIsUniqueService;
