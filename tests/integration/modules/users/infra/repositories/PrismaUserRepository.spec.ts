@@ -9,6 +9,7 @@ import { Email } from "@/modules/users/domain/value-objects/Email";
 import { Password } from "@/modules/users/domain/value-objects/Password";
 
 import { prisma } from "@/shared/infra/database/PrismaClient";
+import { Id } from "@/shared/domain/value-objects/Id";
 
 describe("PrismaUserRepository (integration)", () => {
   const repository = new PrismaUserRepository();
@@ -18,7 +19,7 @@ describe("PrismaUserRepository (integration)", () => {
   });
 
   it("should save a new user", async () => {
-    const user = User.create({ 
+    const user = User.create({
       name: Name.create({ value: "Test User" }),
       alias: Alias.create({ value: "test_user" }),
       email: Email.create({ value: "test@example.com" }),
@@ -72,5 +73,24 @@ describe("PrismaUserRepository (integration)", () => {
     const alias = Alias.create({ value: "unknown_alias" });
     const found = await repository.findUserByAlias(alias);
     expect(found).toBeNull();
+  });
+
+  it("should find a user by id", async () => {
+    const userId = Id.generate<"UserId">();
+    const user = User.create(
+      {
+        name: Name.create({ value: "id finder" }),
+        alias: Alias.create({ value: "id_finder" }),
+        email: Email.create({ value: "id@example.com" }),
+        password: Password.create({ value: "StrongP@ss1" }),
+      },
+      userId,
+    );
+
+    await repository.save(user);
+
+    const found = await repository.findUserById(user.id);
+    expect(found).not.toBeNull();
+    expect(found?.id.isEqual(userId)).toBeTruthy();
   });
 });

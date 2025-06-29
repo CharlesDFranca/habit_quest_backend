@@ -7,6 +7,7 @@ import { UserMapper } from "../mappers/UserMapper";
 
 import { prisma } from "@/shared/infra/database/PrismaClient";
 import { injectable } from "tsyringe";
+import { Id } from "@/shared/domain/value-objects/Id";
 
 @injectable()
 export class PrismaUserRepository implements IUserRepository {
@@ -31,6 +32,16 @@ export class PrismaUserRepository implements IUserRepository {
   async findUserByEmail(email: Email): Promise<User | null> {
     const userExists = await prisma.user.findUnique({
       where: { email: email.value },
+    });
+
+    if (!userExists) return null;
+
+    return UserMapper.toDomain(userExists);
+  }
+
+  async findUserById(id: Id<"UserId">): Promise<User | null> {
+    const userExists = await prisma.user.findUnique({
+      where: { id: id.value },
     });
 
     if (!userExists) return null;
