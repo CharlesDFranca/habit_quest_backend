@@ -2,7 +2,7 @@ import "reflect-metadata";
 import "@/shared/infra/di/container";
 
 import express from "express";
-import { envConfig } from "./config/EnvConfig";
+import { envConfig } from "./config/env/EnvConfig";
 import { userRoutes } from "./modules/users/presentation/http/routes/UserRoutes";
 
 const PORT = envConfig.getPort() ?? 3000;

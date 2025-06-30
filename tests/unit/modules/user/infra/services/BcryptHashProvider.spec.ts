@@ -5,7 +5,7 @@ import { BcryptHashProvider } from "@/modules/users/infra/services/BcryptHashPro
 
 let mockedGetSaltRounds: () => number | undefined;
 
-vi.mock("@/config/EnvConfig", () => ({
+vi.mock("@/config/env/EnvConfig", () => ({
   envConfig: {
     getSaltRounds: () => mockedGetSaltRounds(),
   },

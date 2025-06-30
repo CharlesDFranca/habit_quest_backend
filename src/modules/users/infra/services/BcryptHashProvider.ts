@@ -1,4 +1,4 @@
-import { envConfig } from "@/config/EnvConfig";
+import { envConfig } from "@/config/env/EnvConfig";
 import { IHashProvider } from "../../app/interfaces/IHashProvider";
 import bcrypt from "bcrypt";
 import { injectable } from "tsyringe";

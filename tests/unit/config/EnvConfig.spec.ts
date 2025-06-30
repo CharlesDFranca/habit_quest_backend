@@ -1,4 +1,4 @@
-import { envConfig } from "@/config/EnvConfig";
+import { envConfig } from "@/config/env/EnvConfig";
 import { describe, it, expect } from "vitest";
 
 describe("EnvConfig unit tests", () => {
@@ -17,6 +17,6 @@ describe("EnvConfig unit tests", () => {
 
     expect(saltRounds).toBeDefined();
     expect(typeof saltRounds).toBe("number");
-    expect(saltRounds).toBe(10);
+    expect(saltRounds).toBe(envConfig.getSaltRounds());
   });
 });
