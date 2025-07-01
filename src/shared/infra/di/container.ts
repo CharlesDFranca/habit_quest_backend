@@ -8,7 +8,11 @@ import { IEnsureAliasIsUniqueService } from "@/modules/users/domain/services/int
 import { IEnsureEmailIsUniqueService } from "@/modules/users/domain/services/interfaces/IEnsureEmailIsUniqueService";
 import { PrismaUserRepository } from "@/modules/users/infra/repositories/PrismaUserRepository";
 import { BcryptHashProvider } from "@/modules/users/infra/services/BcryptHashProvider";
+import { IImageStorageService } from "@/shared/app/interfaces/IImageStorageService";
 import { container } from "tsyringe";
+import { DiskStorageService } from "../services/DiskStorageService";
+import { IIamgeCompressorService } from "@/shared/app/interfaces/IIamgeCompressorService";
+import { SharpImageCompressor } from "../services/SharpImageCompressor";
 
 // -----------------------------------------------------------------------------------------------
 // USER
@@ -38,3 +42,12 @@ container.register<IEnsureEmailIsUniqueService>("EnsureEmailIsUniqueService", {
 // -----------------------------------------------------------------------------------------------
 
 container.register<IPostRepository>("PostRepository", PrismaPostRepository);
+
+container.register<IImageStorageService>(
+  "ImageStorageService",
+  DiskStorageService,
+);
+container.register<IIamgeCompressorService>(
+  "IamgeCompressorService",
+  SharpImageCompressor,
+);
