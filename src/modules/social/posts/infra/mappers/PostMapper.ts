@@ -39,6 +39,7 @@ export class PostMapper {
 
   static toPersistence(post: Post) {
     return {
+      id: post.id.value,
       content: post.content.value,
       authorId: post.authorId.value,
       commentCount: post.commentCount.value,
