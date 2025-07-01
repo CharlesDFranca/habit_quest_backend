@@ -33,7 +33,7 @@ export class CreatePostUseCase
     @inject("UserRepository")
     private readonly userRepository: IUserRepository,
     @inject("ImageStorageService")
-    private readonly storageImageSerive: IImageStorageService,
+    private readonly storageImageService: IImageStorageService,
   ) {}
 
   async execute(input: CreatePostInput): Promise<CreatePostOutput> {
@@ -49,7 +49,7 @@ export class CreatePostUseCase
 
     const imageUrls = await Promise.all(
       input.imagesUrls.map(async (file) => {
-        const path = await this.storageImageSerive.save(file);
+        const path = await this.storageImageService.save(file);
         this.uploadedPaths.push(path);
         return ImageUrl.create({ value: path });
       }),
@@ -72,7 +72,7 @@ export class CreatePostUseCase
 
   async rollback(): Promise<void> {
     await Promise.all(
-      this.uploadedPaths.map((path) => this.storageImageSerive.delete(path)),
+      this.uploadedPaths.map((path) => this.storageImageService.delete(path)),
     );
   }
 }

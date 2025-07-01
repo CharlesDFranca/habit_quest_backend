@@ -11,7 +11,7 @@ import { BcryptHashProvider } from "@/modules/users/infra/services/BcryptHashPro
 import { IImageStorageService } from "@/shared/app/interfaces/IImageStorageService";
 import { container } from "tsyringe";
 import { DiskStorageService } from "../services/DiskStorageService";
-import { IIamgeCompressorService } from "@/shared/app/interfaces/IIamgeCompressorService";
+import { IImageCompressorService } from "@/shared/app/interfaces/IImageCompressorService";
 import { SharpImageCompressor } from "../services/SharpImageCompressor";
 
 // -----------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ container.register<IImageStorageService>(
   "ImageStorageService",
   DiskStorageService,
 );
-container.register<IIamgeCompressorService>(
-  "IamgeCompressorService",
+container.register<IImageCompressorService>(
+  "ImageCompressorService",
   SharpImageCompressor,
 );

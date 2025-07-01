@@ -1,12 +1,12 @@
 import {
-  IIamgeCompressorService,
+  IImageCompressorService,
   ImageCompressorProps,
-} from "@/shared/app/interfaces/IIamgeCompressorService";
+} from "@/shared/app/interfaces/IImageCompressorService";
 import sharp from "sharp";
 import { injectable } from "tsyringe";
 
 @injectable()
-export class SharpImageCompressor implements IIamgeCompressorService {
+export class SharpImageCompressor implements IImageCompressorService {
   async process(fileProps: ImageCompressorProps): Promise<void> {
     await sharp(fileProps.buffer)
       .resize({ width: 600 })

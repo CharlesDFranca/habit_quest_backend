@@ -6,11 +6,16 @@ import {
 import fs from "node:fs/promises";
 import path from "node:path";
 import { randomBytes } from "node:crypto";
-import { SharpImageCompressor } from "./SharpImageCompressor";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
+import { IImageCompressorService } from "@/shared/app/interfaces/IImageCompressorService";
 
 @injectable()
 export class DiskStorageService implements IImageStorageService {
+  constructor(
+    @inject("ImageCompressorService")
+    private readonly imageCompressorService: IImageCompressorService,
+  ) {}
+
   private readonly uploadFolder = path.resolve(
     __dirname,
     "..",
@@ -25,9 +30,10 @@ export class DiskStorageService implements IImageStorageService {
     const filename = `${hash}-${file.originalName.replace(/\s+/g, "-")}.webp`;
     const outputPath = path.join(this.uploadFolder, filename);
 
-    const service = new SharpImageCompressor();
-
-    await service.process({ buffer: file.buffer, outputPath });
+    await this.imageCompressorService.process({
+      buffer: file.buffer,
+      outputPath,
+    });
 
     return `/uploads/${filename}`;
   }
