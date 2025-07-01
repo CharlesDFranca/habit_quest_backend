@@ -1,16 +1,21 @@
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { CreatePostUseCase } from "../../../app/use-cases/CreatePostUseCase";
+import { ImageInput } from "@/shared/app/interfaces/IImageStorageService";
+import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
 
 export class PostController {
   static async createPost(req: Request, res: Response) {
-    const { authorId, content, imagesUrls, isPrivate } = req.body;
+    const { authorId, content, isPrivate } = req.body;
+
+    const files = req.files as Express.Multer.File[];
+
     try {
-      if (!authorId || !content || !imagesUrls) {
+      if (!authorId || !content || !files) {
         const missingFields = [];
         if (!authorId) missingFields.push("authorId");
         if (!content) missingFields.push("content");
-        if (!imagesUrls) missingFields.push("imagesUrls");
+        if (!files) missingFields.push("imagesUrls");
 
         throw new Error(
           `Missing required fields: [${missingFields.join(", ")}]`,
@@ -19,14 +24,22 @@ export class PostController {
 
       const createPostUseCase = container.resolve(CreatePostUseCase);
 
-      const postId = await createPostUseCase.execute({
-        authorId: authorId,
-        content: content,
-        imagesUrls: imagesUrls,
-        isPrivate: isPrivate,
+      const imagesUrls: ImageInput[] = files.map((file) => {
+        return {
+          buffer: file.buffer,
+          originalName: file.originalname,
+          mimeType: file.mimetype,
+        };
       });
 
-      res.status(201).json({ postId });
+      const createdPost = await UseCaseExecutor.run(createPostUseCase, {
+        authorId: authorId,
+        content: content,
+        imagesUrls,
+        isPrivate: isPrivate === "true",
+      });
+
+      res.status(201).json({ postId: createdPost.postId.value });
     } catch (err) {
       console.log(err);
 

@@ -7,12 +7,16 @@ import { Counter } from "@/shared/domain/value-objects/Counter";
 import { IPostRepository } from "../../domain/repositories/IPostRepository";
 import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
+import {
+  ImageInput,
+  IImageStorageService,
+} from "@/shared/app/interfaces/IImageStorageService";
 
 type CreatePostInput = {
   authorId: string;
   content: string;
   isPrivate?: boolean;
-  imagesUrls: string[];
+  imagesUrls: ImageInput[];
 };
 
 type CreatePostOutput = { postId: Id<"PostId"> };
@@ -21,11 +25,15 @@ type CreatePostOutput = { postId: Id<"PostId"> };
 export class CreatePostUseCase
   implements IUseCase<CreatePostInput, CreatePostOutput>
 {
+  private readonly uploadedPaths: string[] = [];
+
   constructor(
     @inject("PostRepository")
     private readonly postRepository: IPostRepository,
     @inject("UserRepository")
     private readonly userRepository: IUserRepository,
+    @inject("ImageStorageService")
+    private readonly storageImageSerive: IImageStorageService,
   ) {}
 
   async execute(input: CreatePostInput): Promise<CreatePostOutput> {
@@ -38,8 +46,13 @@ export class CreatePostUseCase
     }
 
     const content = PostContent.create({ value: input.content });
-    const imageUrls = input.imagesUrls.map((imageUrl) =>
-      ImageUrl.create({ value: imageUrl }),
+
+    const imageUrls = await Promise.all(
+      input.imagesUrls.map(async (file) => {
+        const path = await this.storageImageSerive.save(file);
+        this.uploadedPaths.push(path);
+        return ImageUrl.create({ value: path });
+      }),
     );
 
     const post = Post.create({
@@ -55,5 +68,11 @@ export class CreatePostUseCase
     await this.postRepository.save(post);
 
     return { postId: post.id };
+  }
+
+  async rollback(): Promise<void> {
+    await Promise.all(
+      this.uploadedPaths.map((path) => this.storageImageSerive.delete(path)),
+    );
   }
 }
