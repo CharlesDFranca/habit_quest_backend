@@ -6,6 +6,7 @@ import { Post } from "../../domain/entities/Post";
 import { Counter } from "@/shared/domain/value-objects/Counter";
 import { IPostRepository } from "../../domain/repositories/IPostRepository";
 import { inject, injectable } from "tsyringe";
+import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 
 type CreatePostInput = {
   authorId: string;
@@ -23,10 +24,19 @@ export class CreatePostUseCase
   constructor(
     @inject("PostRepository")
     private readonly postRepository: IPostRepository,
+    @inject("UserRepository")
+    private readonly userRepository: IUserRepository,
   ) {}
 
   async execute(input: CreatePostInput): Promise<CreatePostOutput> {
     const authorId = Id.create<"UserId">({ value: input.authorId });
+
+    const authorExists = await this.userRepository.findUserById(authorId);
+
+    if (!authorExists) {
+      throw new Error("Author not exists");
+    }
+
     const content = PostContent.create({ value: input.content });
     const imageUrls = input.imagesUrls.map((imageUrl) =>
       ImageUrl.create({ value: imageUrl }),
