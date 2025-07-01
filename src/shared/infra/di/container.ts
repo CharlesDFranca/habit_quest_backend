@@ -1,3 +1,5 @@
+import { IPostRepository } from "@/modules/social/posts/domain/repositories/IPostRepository";
+import { PrismaPostRepository } from "@/modules/social/posts/infra/repositories/PrismaPostsRepository";
 import { IHashProvider } from "@/modules/users/app/interfaces/IHashProvider";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { EnsureAliasIsUniqueService } from "@/modules/users/domain/services/EnsureAliasIsUniqueService";
@@ -7,6 +9,10 @@ import { IEnsureEmailIsUniqueService } from "@/modules/users/domain/services/int
 import { PrismaUserRepository } from "@/modules/users/infra/repositories/PrismaUserRepository";
 import { BcryptHashProvider } from "@/modules/users/infra/services/BcryptHashProvider";
 import { container } from "tsyringe";
+
+// -----------------------------------------------------------------------------------------------
+// USER
+// -----------------------------------------------------------------------------------------------
 
 container.register<IUserRepository>("UserRepository", PrismaUserRepository);
 container.register<IHashProvider>("HashProvider", BcryptHashProvider);
@@ -26,3 +32,9 @@ container.register<IEnsureEmailIsUniqueService>("EnsureEmailIsUniqueService", {
     );
   },
 });
+
+// -----------------------------------------------------------------------------------------------
+// POST
+// -----------------------------------------------------------------------------------------------
+
+container.register<IPostRepository>("PostRepository", PrismaPostRepository);
