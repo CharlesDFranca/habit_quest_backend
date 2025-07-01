@@ -15,4 +15,12 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(postRoutes);
 
-app.listen(PORT, () => console.log(`Running on port: ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`[CONFIG]: App is running on PORT: ${envConfig.getPort()}`);
+  console.log(
+    `[CONFIG]: App is using SALT_ROUNDS: ${envConfig.getSaltRounds()}`,
+  );
+  console.log(
+    `[CONFIG]: App is using this STORAGE_DRIVER: ${envConfig.getStorageDriver()}`,
+  );
+});

@@ -55,6 +55,4 @@ class EnvConfig implements IEnvConfig {
 
 const envConfig = new EnvConfig();
 
-console.log(envConfig);
-
 export { envConfig };
