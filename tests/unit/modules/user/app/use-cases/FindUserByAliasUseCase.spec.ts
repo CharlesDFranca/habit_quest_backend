@@ -32,7 +32,14 @@ describe("FindUserByAliasUseCase unit tests", () => {
 
     const result = await useCase.execute({ alias: "john_doe" });
 
-    expect(result).toBe(user);
+    expect(result).toStrictEqual({
+      userId: user.id.value,
+      name: user.name.value,
+      alias: user.alias.value,
+      email: user.email.value, 
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
     expect(mockUserRepository.findUserByAlias).toHaveBeenCalledWith(alias);
   });
 

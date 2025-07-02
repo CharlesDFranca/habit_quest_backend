@@ -1,12 +1,18 @@
 import { IUseCase } from "@/shared/app/interfaces/IUseCase";
-import { User } from "../../domain/entities/User";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { inject, injectable } from "tsyringe";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 
 type FindUserByAliasInput = { alias: string };
 
-type FindUserByAliasOutput = User;
+type FindUserByAliasOutput = {
+  userId: string;
+  name: string;
+  alias: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 @injectable()
 export class FindUserByAliasUseCase
@@ -26,6 +32,13 @@ export class FindUserByAliasUseCase
       throw new Error(`User with alias: ${alias.value}, not found`);
     }
 
-    return user;
+    return {
+      userId: user.id.value,
+      name: user.name.value,
+      email: user.email.value,
+      alias: user.alias.value,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 }

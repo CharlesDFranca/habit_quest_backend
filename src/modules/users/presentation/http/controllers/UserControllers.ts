@@ -54,19 +54,11 @@ export class UserControllers {
     const findUserByAliasUseCase = container.resolve(FindUserByAliasUseCase);
 
     try {
-      const user = await UseCaseExecutor.run(findUserByAliasUseCase, {
+      const userData = await UseCaseExecutor.run(findUserByAliasUseCase, {
         alias: data.alias,
       });
-      res.status(200).json({
-        userData: {
-          id: user.id.value,
-          name: user.name.value,
-          email: user.email.value,
-          passwordHash: user.password.value,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-        },
-      });
+
+      res.status(200).json({ userData });
     } catch (err) {
       if (err instanceof Error) {
         res.status(404).json({ message: err.message, alias: data.alias });
@@ -90,21 +82,11 @@ export class UserControllers {
 
       const findUserByIdUseCase = container.resolve(FindUserByIdUseCase);
 
-      const user = await UseCaseExecutor.run(findUserByIdUseCase, {
+      const userData = await UseCaseExecutor.run(findUserByIdUseCase, {
         userId: id,
       });
 
-      res.status(200).json({
-        userData: {
-          id: user.id.value,
-          name: user.name.value,
-          alias: user.alias.value,
-          email: user.email.value,
-          password: user.password.value,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-        },
-      });
+      res.status(200).json({ userData });
     } catch (err) {
       if (err instanceof Error) {
         res.status(400).json({

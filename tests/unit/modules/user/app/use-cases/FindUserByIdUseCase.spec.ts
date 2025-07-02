@@ -34,7 +34,14 @@ describe("FindUserByIdUseCase unit tests", () => {
 
     const result = await useCase.execute({ userId: id.value });
 
-    expect(result).toBe(user);
+    expect(result).toStrictEqual({
+      userId: user.id.value,
+      name: user.name.value,
+      alias: user.alias.value,
+      email: user.email.value,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
     expect(mockUserRepository.findUserById).toHaveBeenCalledWith(id);
   });
 
