@@ -1,6 +1,7 @@
 import { CreateUserUseCase } from "@/modules/users/app/use-cases/CreateUserUseCase";
 import { FindUserByAliasUseCase } from "@/modules/users/app/use-cases/FindUserByAliasUseCase";
 import { FindUserByIdUseCase } from "@/modules/users/app/use-cases/FindUserByIdUseCase";
+import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 
@@ -23,7 +24,7 @@ export class UserControllers {
         );
       }
 
-      const createdUser = await createUserUseCase.execute({
+      const createdUser = await UseCaseExecutor.run(createUserUseCase, {
         alias,
         email,
         name,
@@ -53,7 +54,9 @@ export class UserControllers {
     const findUserByAliasUseCase = container.resolve(FindUserByAliasUseCase);
 
     try {
-      const user = await findUserByAliasUseCase.execute({ alias: data.alias });
+      const user = await UseCaseExecutor.run(findUserByAliasUseCase, {
+        alias: data.alias,
+      });
       res.status(200).json({
         userData: {
           id: user.id.value,
@@ -87,7 +90,9 @@ export class UserControllers {
 
       const findUserByIdUseCase = container.resolve(FindUserByIdUseCase);
 
-      const user = await findUserByIdUseCase.execute({ userId: id });
+      const user = await UseCaseExecutor.run(findUserByIdUseCase, {
+        userId: id,
+      });
 
       res.status(200).json({
         userData: {
