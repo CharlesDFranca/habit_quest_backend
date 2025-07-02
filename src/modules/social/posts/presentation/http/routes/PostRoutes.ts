@@ -17,4 +17,8 @@ postRoutes.get("/posts/authorId/:authorId", (req: Request, res: Response) =>
   PostController.findPostsByAuthorId(req, res),
 );
 
+postRoutes.get("/posts/findId/", (req: Request, res: Response) =>
+  PostController.findPostById(req, res),
+);
+
 export { postRoutes };

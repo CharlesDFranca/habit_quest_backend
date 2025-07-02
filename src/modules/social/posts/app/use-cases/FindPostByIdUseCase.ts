@@ -1,6 +1,7 @@
 import { IUseCase } from "@/shared/app/interfaces/IUseCase";
 import { IPostRepository } from "../../domain/repositories/IPostRepository";
 import { Id } from "@/shared/domain/value-objects/Id";
+import { inject, injectable } from "tsyringe";
 
 type FindPostByIdInput = { postId: string };
 type FindPostByIdOutput = {
@@ -14,10 +15,14 @@ type FindPostByIdOutput = {
   updatedAt: Date;
 };
 
+@injectable()
 export class FindPostByIdUseCase
   implements IUseCase<FindPostByIdInput, FindPostByIdOutput>
 {
-  constructor(private readonly postRepository: IPostRepository) {}
+  constructor(
+    @inject("PostRepository")
+    private readonly postRepository: IPostRepository,
+  ) {}
 
   async execute(input: FindPostByIdInput): Promise<FindPostByIdOutput> {
     const postId = Id.create<"PostId">({ value: input.postId });

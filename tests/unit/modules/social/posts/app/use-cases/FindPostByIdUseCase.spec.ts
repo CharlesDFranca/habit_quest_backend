@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { FindPostByIdUseCase } from "@/modules/social/posts/app/use-cases/FindPostByIdUseCase";
 import { IPostRepository } from "@/modules/social/posts/domain/repositories/IPostRepository";

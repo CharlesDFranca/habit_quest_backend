@@ -4,6 +4,7 @@ import { CreatePostUseCase } from "../../../app/use-cases/CreatePostUseCase";
 import { ImageInput } from "@/shared/app/interfaces/IImageStorageService";
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
 import { FindPostsByAuthorIdUseCase } from "../../../app/use-cases/FindPostsByAuthorIdUseCase";
+import { FindPostByIdUseCase } from "../../../app/use-cases/FindPostByIdUseCase";
 
 type FormatedPost = {
   id: string;
@@ -96,6 +97,27 @@ export class PostController {
         res
           .status(400)
           .json({ message: "something went wrong", err: err.message });
+      }
+    }
+  }
+
+  static async findPostById(req: Request, res: Response) {
+    const { postId } = req.body;
+
+    try {
+      const findPostByIdUseCase = container.resolve(FindPostByIdUseCase);
+
+      const post = await UseCaseExecutor.run(findPostByIdUseCase, { postId });
+
+      res.status(200).json({ post });
+    } catch (err) {
+      if (err instanceof Error) {
+        res
+          .status(400)
+          .json({
+            message: "Something went wrong",
+            specificError: err.message,
+          });
       }
     }
   }
