@@ -1,20 +1,21 @@
 import { Id } from "@/shared/domain/value-objects/Id";
 import { IEnsureOneCommentLikePerUserService } from "./interfaces/IEnsureOneCommentLikePerUserService";
-import { ILikeRepository } from "../repositories/ILikeRepository";
+import { ICommentLikeRepository } from "../repositories/ICommentLikeRepository";
 
 export class EnsureOneCommentLikePerUserService
   implements IEnsureOneCommentLikePerUserService
 {
-  constructor(private readonly likeRepository: ILikeRepository) {}
+  constructor(private readonly commentLikeRepository: ICommentLikeRepository) {}
 
   async assertUserHasNotLikedComment(
     userId: Id<"UserId">,
     commentId: Id<"CommentId">,
   ): Promise<void> {
-    const alreadyLiked = await this.likeRepository.findLikeByUserIdAndCommentId(
-      userId,
-      commentId,
-    );
+    const alreadyLiked =
+      await this.commentLikeRepository.findLikeByUserIdAndCommentId(
+        userId,
+        commentId,
+      );
 
     if (alreadyLiked) {
       throw new Error("User cannot like a comment more than once");
