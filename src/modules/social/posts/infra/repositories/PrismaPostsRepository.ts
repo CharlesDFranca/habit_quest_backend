@@ -15,6 +15,13 @@ export class PrismaPostRepository implements IPostRepository {
     return PostMapper.toDomain(newPost);
   }
 
+  async update(post: Post): Promise<void> {
+    await prisma.post.update({
+      where: { id: post.id.value },
+      data: PostMapper.toPersistence(post),
+    });
+  }
+
   async findPostsByAuthorId(authorId: Id<"UserId">): Promise<Post[]> {
     const posts = await prisma.post.findMany({
       where: { authorId: authorId.value },
@@ -29,5 +36,13 @@ export class PrismaPostRepository implements IPostRepository {
     if (!post) return null;
 
     return PostMapper.toDomain(post);
+  }
+
+  async findLikedPostsByUserId(userId: Id<"UserId">): Promise<Post[]> {
+    const posts = await prisma.post.findMany({
+      where: { likes: { some: { userId: userId.value } } },
+    });
+
+    return posts.map((post) => PostMapper.toDomain(post));
   }
 }
