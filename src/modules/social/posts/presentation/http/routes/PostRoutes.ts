@@ -7,8 +7,14 @@ const postRoutes = express.Router();
 
 const upload = multer(uploadConfig.multer);
 
-postRoutes.post("/post", upload.array("image"), (req: Request, res: Response) =>
-  PostController.createPost(req, res),
-); 
+postRoutes.post(
+  "/posts",
+  upload.array("image"),
+  (req: Request, res: Response) => PostController.createPost(req, res),
+);
+
+postRoutes.get("/posts/authorId/:authorId", (req: Request, res: Response) =>
+  PostController.findPostsByAuthorId(req, res),
+);
 
 export { postRoutes };

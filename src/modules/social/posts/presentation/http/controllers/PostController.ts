@@ -3,6 +3,17 @@ import { container } from "tsyringe";
 import { CreatePostUseCase } from "../../../app/use-cases/CreatePostUseCase";
 import { ImageInput } from "@/shared/app/interfaces/IImageStorageService";
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
+import { FindPostsByAuthorIdUseCase } from "../../../app/use-cases/FindPostsByAuthorIdUseCase";
+
+type FormatedPost = {
+  id: string;
+  content: string;
+  imageUrls: string[];
+  commentCount: number;
+  likeCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 export class PostController {
   static async createPost(req: Request, res: Response) {
@@ -49,6 +60,42 @@ export class PostController {
           errorMessage: err.message,
         });
         return;
+      }
+    }
+  }
+
+  static async findPostsByAuthorId(req: Request, res: Response) {
+    const { authorId } = req.params;
+
+    const findPostsByAuthorId = container.resolve(FindPostsByAuthorIdUseCase);
+
+    try {
+      const posts = await UseCaseExecutor.run(findPostsByAuthorId, {
+        authorId,
+      });
+
+      const formatedPosts: FormatedPost[] = posts.map((post) => {
+        return {
+          id: post.id.value,
+          content: post.content.value,
+          imageUrls: post.images.map((image) => image.value),
+          commentCount: post.commentCount.value,
+          likeCount: post.commentCount.value,
+          createdAt: post.createdAt,
+          updatedAt: post.updatedAt,
+        } as FormatedPost;
+      });
+
+      res.status(200).json({
+        authorId,
+        postsCount: formatedPosts.length,
+        posts: formatedPosts,
+      });
+    } catch (err) {
+      if (err instanceof Error) {
+        res
+          .status(400)
+          .json({ message: "something went wrong", err: err.message });
       }
     }
   }
