@@ -1,0 +1,41 @@
+import { Request, Response } from "express";
+import { container } from "tsyringe";
+import { LikeAPostUseCase } from "../../../app/use-cases/post-like/LikeAPostUseCase";
+import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
+
+export class PostLikeControllers {
+  static async createLikePost(req: Request, res: Response) {
+    const { userId, postId } = req.body;
+
+    if (!userId || !postId) {
+      const missingFields = [];
+      if (!userId) missingFields.push("userId");
+      if (!postId) missingFields.push("postId");
+
+      throw new Error(`Missing required fields: [${missingFields.join(", ")}]`);
+    }
+
+    try {
+      const likeAPostUseCase = container.resolve(LikeAPostUseCase);
+
+      const { postLikeId } = await UseCaseExecutor.run(likeAPostUseCase, {
+        userId,
+        postId,
+      });
+
+      res.status(201).json({ postLikeId: postLikeId.value });
+    } catch (err) {
+      if (err instanceof Error) {
+        res.status(400).json({
+          message: "Something went wrong",
+          specificError: err.message,
+        });
+      }
+
+      res.status(500).json({
+        message: "Something went wrong",
+        specificError: err,
+      });
+    }
+  }
+}
