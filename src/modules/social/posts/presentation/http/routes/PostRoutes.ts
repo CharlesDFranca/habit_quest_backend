@@ -21,4 +21,8 @@ postRoutes.get("/posts/findId/", (req: Request, res: Response) =>
   PostController.findPostById(req, res),
 );
 
+postRoutes.get("/posts/likedPosts/:userId", (req: Request, res: Response) =>
+  PostController.findLikedPostsByUserId(req, res),
+);
+
 export { postRoutes };
