@@ -13,6 +13,14 @@ import { container } from "tsyringe";
 import { DiskStorageService } from "../services/DiskStorageService";
 import { IImageCompressorService } from "@/shared/app/interfaces/IImageCompressorService";
 import { SharpImageCompressor } from "../services/SharpImageCompressor";
+import { IPostLikeRepository } from "@/modules/social/likes/domain/repositories/IPostLikeRepository";
+import { PrismaPostLikeRepository } from "@/modules/social/likes/infra/repositories/PrismaLikePostRepository";
+import { ICommentLikeRepository } from "@/modules/social/likes/domain/repositories/ICommentLikeRepository";
+import { PrismaCommentLikeRepository } from "@/modules/social/likes/infra/repositories/PrismaCommentLikeRepository";
+import { IEnsureOneCommentLikePerUserService } from "@/modules/social/likes/domain/services/interfaces/IEnsureOneCommentLikePerUserService";
+import { EnsureOneCommentLikePerUserService } from "@/modules/social/likes/domain/services/EnsureOneCommentLikePerUserService";
+import { IEnsureOnePostLikePerUserService } from "@/modules/social/likes/domain/services/interfaces/IEnsureOnePostLikePerUserService";
+import { EnsureOnePostLikePerUserService } from "@/modules/social/likes/domain/services/EnsureOnePostLikePerUserService";
 
 // -----------------------------------------------------------------------------------------------
 // USER
@@ -50,4 +58,39 @@ container.register<IImageStorageService>(
 container.register<IImageCompressorService>(
   "ImageCompressorService",
   SharpImageCompressor,
+);
+
+// -----------------------------------------------------------------------------------------------
+// LIKE
+// -----------------------------------------------------------------------------------------------
+
+container.register<IPostLikeRepository>(
+  "PostLikeRepository",
+  PrismaPostLikeRepository,
+);
+container.register<ICommentLikeRepository>(
+  "CommentLikeRepository",
+  PrismaCommentLikeRepository,
+);
+
+container.register<IEnsureOneCommentLikePerUserService>(
+  "EnsureOneCommentLikePerUserService",
+  {
+    useFactory(dependencyContainer) {
+      return new EnsureOneCommentLikePerUserService(
+        dependencyContainer.resolve("CommentLikeRepository"),
+      );
+    },
+  },
+);
+
+container.register<IEnsureOnePostLikePerUserService>(
+  "EnsureOnePostLikePerUserService",
+  {
+    useFactory(dependencyContainer) {
+      return new EnsureOnePostLikePerUserService(
+        dependencyContainer.resolve("PostLikeRepository"),
+      );
+    },
+  },
 );
