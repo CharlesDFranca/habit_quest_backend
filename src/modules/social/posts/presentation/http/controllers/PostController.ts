@@ -81,7 +81,7 @@ export class PostController {
           content: post.content.value,
           imageUrls: post.images.map((image) => image.value),
           commentCount: post.commentCount.value,
-          likeCount: post.commentCount.value,
+          likeCount: post.likeCount.value,
           createdAt: post.createdAt,
           updatedAt: post.updatedAt,
         } as FormatedPost;
