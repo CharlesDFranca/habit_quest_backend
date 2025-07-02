@@ -69,8 +69,8 @@ model Comment {
 
 model PostLike {
   id        String   @id
-  userId    String
-  postId    String
+  userId    String   @unique
+  postId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
@@ -83,8 +83,8 @@ model PostLike {
 
 model CommentLike {
   id        String   @id
-  userId    String
-  commentId String
+  userId    String   @unique
+  commentId String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
