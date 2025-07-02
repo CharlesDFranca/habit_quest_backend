@@ -22,4 +22,12 @@ export class PrismaPostRepository implements IPostRepository {
 
     return posts.map((post) => PostMapper.toDomain(post));
   }
+
+  async findPostById(postId: Id<"PostId">): Promise<Post | null> {
+    const post = await prisma.post.findUnique({ where: { id: postId.value } });
+
+    if (!post) return null;
+
+    return PostMapper.toDomain(post);
+  }
 }
