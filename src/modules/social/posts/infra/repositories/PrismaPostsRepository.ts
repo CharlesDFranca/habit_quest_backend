@@ -3,6 +3,7 @@ import { Post } from "../../domain/entities/Post";
 import { IPostRepository } from "../../domain/repositories/IPostRepository";
 import { PostMapper } from "../mappers/PostMapper";
 import { injectable } from "tsyringe";
+import { Id } from "@/shared/domain/value-objects/Id";
 
 @injectable()
 export class PrismaPostRepository implements IPostRepository {
@@ -12,5 +13,13 @@ export class PrismaPostRepository implements IPostRepository {
     });
 
     return PostMapper.toDomain(newPost);
+  }
+
+  async findPostsByAuthorId(authorId: Id<"UserId">): Promise<Post[]> {
+    const posts = await prisma.post.findMany({
+      where: { authorId: authorId.value },
+    });
+
+    return posts.map((post) => PostMapper.toDomain(post));
   }
 }
