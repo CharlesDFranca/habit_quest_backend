@@ -1,3 +1,4 @@
+import { InvalidValueObjectException } from "@/shared/domain/erros/InvalidValueObjectException";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type PostContentProps = { value: string };
@@ -14,11 +15,13 @@ export class PostContent extends ValueObject<PostContentProps> {
     const content = props.value;
 
     if (content.length === 0) {
-      throw new Error("Post content cannot be empty");
+      throw new InvalidValueObjectException("Post content cannot be empty");
     }
 
     if (content.length > MAX_LENGTH) {
-      throw new Error(`Post content cannot be too long. [MAX: ${MAX_LENGTH}]`);
+      throw new InvalidValueObjectException(
+        `Post content cannot be too long. [MAX: ${MAX_LENGTH}]`,
+      );
     }
 
     return true;
@@ -28,7 +31,7 @@ export class PostContent extends ValueObject<PostContentProps> {
     const MIN_LENGTH_FOR_SUMMARY = 10;
 
     if (maxLength < MIN_LENGTH_FOR_SUMMARY) {
-      throw new Error(
+      throw new InvalidValueObjectException(
         `The maximum length must be at least ${MIN_LENGTH_FOR_SUMMARY} to allow for a meaningful summary`,
       );
     }
