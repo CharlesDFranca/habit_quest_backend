@@ -2,6 +2,7 @@ import { IUseCase } from "@/shared/app/interfaces/IUseCase";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { inject, injectable } from "tsyringe";
 import { Alias } from "@/shared/domain/value-objects/Alias";
+import { UserNotFoundException } from "../errors/UserNotFoundException";
 
 type FindUserByAliasInput = { alias: string };
 
@@ -29,7 +30,9 @@ export class FindUserByAliasUseCase
     const user = await this.userRepository.findUserByAlias(alias);
 
     if (!user) {
-      throw new Error(`User with alias: ${alias.value}, not found`);
+      throw new UserNotFoundException(
+        `User not found by "alias": ${alias.value}`,
+      );
     }
 
     return {

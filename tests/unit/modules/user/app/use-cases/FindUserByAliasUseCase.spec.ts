@@ -36,7 +36,7 @@ describe("FindUserByAliasUseCase unit tests", () => {
       userId: user.id.value,
       name: user.name.value,
       alias: user.alias.value,
-      email: user.email.value, 
+      email: user.email.value,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
@@ -49,7 +49,7 @@ describe("FindUserByAliasUseCase unit tests", () => {
     vi.spyOn(mockUserRepository, "findUserByAlias").mockResolvedValueOnce(null);
 
     await expect(() => useCase.execute({ alias: "unknown" })).rejects.toThrow(
-      `User with alias: ${alias.value}, not found`,
+      `User not found by "alias": ${alias.value}`,
     );
   });
 });

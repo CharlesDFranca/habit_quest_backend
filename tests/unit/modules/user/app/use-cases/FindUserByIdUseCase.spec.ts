@@ -51,7 +51,7 @@ describe("FindUserByIdUseCase unit tests", () => {
     vi.spyOn(mockUserRepository, "findUserById").mockResolvedValueOnce(null);
 
     await expect(() => useCase.execute({ userId: id.value })).rejects.toThrow(
-      `User not found`,
+      `User not found by "id": ${id.value}`,
     );
   });
 });
