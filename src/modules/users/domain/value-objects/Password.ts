@@ -1,3 +1,4 @@
+import { InvalidValueObjectException } from "@/shared/domain/erros/InvalidValueObjectException";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type PasswordProps = { value: string; isHashed?: boolean };
@@ -21,7 +22,7 @@ export class Password extends ValueObject<PasswordProps> {
     const password = props.value;
 
     if (password.length === 0) {
-      throw new Error("Password cannot be empty");
+      throw new InvalidValueObjectException("Password cannot be empty");
     }
 
     if (props.isHashed) return true;
@@ -30,35 +31,47 @@ export class Password extends ValueObject<PasswordProps> {
     const MAX_LENGTH = 20;
 
     if (password.length < MIN_LENGTH) {
-      throw new Error(`Password cannot be too short: [MIN: ${MIN_LENGTH}]`);
+      throw new InvalidValueObjectException(
+        `Password cannot be too short: [MIN: ${MIN_LENGTH}]`,
+      );
     }
 
     if (password.length > MAX_LENGTH) {
-      throw new Error(`Password cannot be too long: [MAX: ${MAX_LENGTH}]`);
+      throw new InvalidValueObjectException(
+        `Password cannot be too long: [MAX: ${MAX_LENGTH}]`,
+      );
     }
 
     const hasLowercase = /[a-z]/;
 
     if (!hasLowercase.test(password)) {
-      throw new Error("Password must have at least one lowercase letter");
+      throw new InvalidValueObjectException(
+        "Password must have at least one lowercase letter",
+      );
     }
 
     const hasUppercase = /[A-Z]/;
 
     if (!hasUppercase.test(password)) {
-      throw new Error("Password must have at least one uppercase letter");
+      throw new InvalidValueObjectException(
+        "Password must have at least one uppercase letter",
+      );
     }
 
     const hasNumber = /\d/;
 
     if (!hasNumber.test(password)) {
-      throw new Error("Password must have at least one number");
+      throw new InvalidValueObjectException(
+        "Password must have at least one number",
+      );
     }
 
     const hasSpecialChar = /[^a-zA-Z0-9]/;
 
     if (!hasSpecialChar.test(password)) {
-      throw new Error("Password must have at least one special character");
+      throw new InvalidValueObjectException(
+        "Password must have at least one special character",
+      );
     }
 
     return true;
