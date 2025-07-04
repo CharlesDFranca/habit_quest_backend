@@ -3,8 +3,8 @@ export class ResponseFormatter {
 
   static success(
     data: unknown,
-    message = "Operation carried out successfully.",
     meta?: Record<string, unknown>,
+    message = "Operation carried out successfully.",
   ) {
     return {
       sucess: true,
@@ -17,8 +17,8 @@ export class ResponseFormatter {
 
   static error(
     errors: Record<string, unknown>,
-    message = "An error occurred during the operation.",
     meta?: Record<string, unknown>,
+    message = "An error occurred during the operation.",
   ) {
     return {
       sucess: false,

@@ -8,6 +8,7 @@ import { FindPostByIdUseCase } from "../../../app/use-cases/FindPostByIdUseCase"
 import { FindLikedPostsByUserIdUseCase } from "../../../app/use-cases/FindLikedPostsByUserIdUseCase";
 import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
+import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
 
 type FormatedPost = {
   id: string;
@@ -25,7 +26,7 @@ export class PostController {
       ValidateRequiredFields.use(req.body, [
         "authorId",
         "content",
-        "imageUrls",
+        "isPrivate",
       ]);
 
       const createPostUseCase = container.resolve(CreatePostUseCase);
@@ -47,15 +48,19 @@ export class PostController {
         isPrivate: isPrivate === "true",
       });
 
-      res.status(201).json({ postId: createdPost.postId.value });
-    } catch (err) {
-      console.log(err);
+      const response = ResponseFormatter.success({
+        postId: createdPost.postId.value,
+      });
 
+      res.status(201).json(response);
+    } catch (err) {
       if (err instanceof Error) {
-        res.status(400).json({
-          message: "Error when trying to create a new post",
-          errorMessage: err.message,
+        const error = ResponseFormatter.error({
+          name: err.name,
+          message: err.message,
         });
+
+        res.status(400).json(error);
         return;
       }
     }
@@ -63,7 +68,7 @@ export class PostController {
 
   static async findPostsByAuthorId(req: Request, res: Response) {
     try {
-      ValidateRequiredFields.use(req.body, ["authorId"]);
+      ValidateRequiredParameters.use(req.params, ["authorId"]);
 
       const { authorId } = req.params;
       const findPostsByAuthorId = container.resolve(FindPostsByAuthorIdUseCase);
@@ -83,35 +88,44 @@ export class PostController {
         } as FormatedPost;
       });
 
-      res.status(200).json({
-        authorId,
-        postsCount: formatedPosts.length,
-        posts: formatedPosts,
-      });
+      const response = ResponseFormatter.success(
+        { posts: formatedPosts },
+        { postsCount: formatedPosts.length },
+      );
+
+      res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        res
-          .status(400)
-          .json({ message: "something went wrong", err: err.message });
+        const error = ResponseFormatter.error({
+          name: err.name,
+          message: err.message,
+        });
+
+        res.status(400).json(error);
       }
     }
   }
 
   static async findPostById(req: Request, res: Response) {
-    const { postId } = req.body;
-
     try {
+      ValidateRequiredFields.use(req.body, ["postId"]);
+
       const findPostByIdUseCase = container.resolve(FindPostByIdUseCase);
 
+      const { postId } = req.body;
       const post = await UseCaseExecutor.run(findPostByIdUseCase, { postId });
 
-      res.status(200).json({ post });
+      const response = ResponseFormatter.success(post);
+
+      res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        res.status(400).json({
-          message: "Something went wrong",
-          specificError: err.message,
+        const error = ResponseFormatter.error({
+          name: err.name,
+          message: err.message,
         });
+
+        res.status(400).json(error);
       }
     }
   }
@@ -141,13 +155,19 @@ export class PostController {
         } as FormatedPost;
       });
 
-      res.status(200).json({ postsData: formatedPosts });
+      const response = ResponseFormatter.success(formatedPosts, {
+        likedPostsCount: formatedPosts.length,
+      });
+
+      res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        res.status(400).json({
-          message: "Something went wrong",
-          specificError: err.message,
+        const error = ResponseFormatter.error({
+          name: err.name,
+          message: err.message,
         });
+
+        res.status(400).json(error);
       }
     }
   }

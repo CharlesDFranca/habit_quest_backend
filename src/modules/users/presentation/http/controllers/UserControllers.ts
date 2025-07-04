@@ -89,9 +89,9 @@ export class UserControllers {
         userId: id,
       });
 
-      const reponse = ResponseFormatter.success(userData);
+      const response = ResponseFormatter.success(userData);
 
-      res.status(200).json(reponse);
+      res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
         const error = ResponseFormatter.error({
