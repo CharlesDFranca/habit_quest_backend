@@ -1,6 +1,7 @@
 import { Id } from "@/shared/domain/value-objects/Id";
 import { IEnsureOneCommentLikePerUserService } from "./interfaces/IEnsureOneCommentLikePerUserService";
 import { ICommentLikeRepository } from "../repositories/ICommentLikeRepository";
+import { UserAlreadyLikedCommentException } from "../errors/UserAlreadyLikedCommentException";
 
 export class EnsureOneCommentLikePerUserService
   implements IEnsureOneCommentLikePerUserService
@@ -18,7 +19,9 @@ export class EnsureOneCommentLikePerUserService
       );
 
     if (alreadyLiked) {
-      throw new Error("User cannot like a comment more than once");
+      throw new UserAlreadyLikedCommentException(
+        "User cannot like a comment more than once",
+      );
     }
   }
 }
