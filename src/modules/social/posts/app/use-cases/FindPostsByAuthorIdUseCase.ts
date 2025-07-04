@@ -4,6 +4,7 @@ import { Id } from "@/shared/domain/value-objects/Id";
 import { IPostRepository } from "../../domain/repositories/IPostRepository";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { inject, injectable } from "tsyringe";
+import { UserNotFoundException } from "@/modules/users/app/errors/UserNotFoundException";
 
 type FindPostsByAuthorIdInput = { authorId: string };
 type FindPostsByAuthorIdOutput = Post[];
@@ -27,7 +28,9 @@ export class FindPostsByAuthorIdUseCase
     const authorExists = await this.userRepository.findUserById(authorId);
 
     if (!authorExists) {
-      throw new Error("Author not found");
+      throw new UserNotFoundException(
+        `Author not found by id: ${authorId.value}`,
+      );
     }
 
     return this.postRepository.findPostsByAuthorId(authorId);

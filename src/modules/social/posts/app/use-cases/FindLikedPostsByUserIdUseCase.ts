@@ -4,6 +4,7 @@ import { IUserRepository } from "@/modules/users/domain/repositories/IUserReposi
 import { inject, injectable } from "tsyringe";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { Post } from "../../domain/entities/Post";
+import { UserNotFoundException } from "@/modules/users/app/errors/UserNotFoundException";
 
 type FindLikedPostsByUserIdInput = { userId: string };
 type FindLikedPostsByUserIdOutput = Post[];
@@ -27,7 +28,7 @@ export class FindLikedPostsByUserIdUseCase
     const userExists = !!(await this.userRepository.findUserById(userId));
 
     if (!userExists) {
-      throw new Error("User not found");
+      throw new UserNotFoundException(`User not found by id: ${userId.value}`);
     }
 
     const likedPosts = await this.postRepository.findLikedPostsByUserId(userId);

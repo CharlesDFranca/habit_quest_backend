@@ -11,6 +11,7 @@ import {
   ImageInput,
   IImageStorageService,
 } from "@/shared/app/interfaces/IImageStorageService";
+import { UserNotFoundException } from "@/modules/users/app/errors/UserNotFoundException";
 
 type CreatePostInput = {
   authorId: string;
@@ -42,7 +43,9 @@ export class CreatePostUseCase
     const authorExists = await this.userRepository.findUserById(authorId);
 
     if (!authorExists) {
-      throw new Error("Author not exists");
+      throw new UserNotFoundException(
+        `Author not found by id: ${authorId.value}`,
+      );
     }
 
     const content = PostContent.create({ value: input.content });

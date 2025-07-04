@@ -127,7 +127,7 @@ describe("CreatePostUseCase unit tests", () => {
     };
 
     await expect(() => useCase.execute(input)).rejects.toThrow(
-      "Author not exists",
+      "Author not found by id: ",
     );
   });
 });
