@@ -20,7 +20,7 @@ type FormatedPost = {
   updatedAt: Date;
 };
 
-export class PostController {
+export class PostControllers {
   static async createPost(req: Request, res: Response) {
     try {
       ValidateRequiredFields.use(req.body, [
