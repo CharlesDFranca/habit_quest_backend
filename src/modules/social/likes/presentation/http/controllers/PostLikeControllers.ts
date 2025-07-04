@@ -3,6 +3,7 @@ import { container } from "tsyringe";
 import { LikeAPostUseCase } from "../../../app/use-cases/post-like/LikeAPostUseCase";
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
 import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
+import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
 
 export class PostLikeControllers {
   static async createLikePost(req: Request, res: Response) {
@@ -17,19 +18,23 @@ export class PostLikeControllers {
         postId,
       });
 
-      res.status(201).json({ postLikeId: postLikeId.value });
+      const response = ResponseFormatter.success(
+        {
+          postLikeId: postLikeId.value,
+        },
+        { postId, userId },
+      );
+
+      res.status(201).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        res.status(400).json({
-          message: "Something went wrong",
-          specificError: err.message,
+        const error = ResponseFormatter.error({
+          name: err.name,
+          message: err.message,
         });
-      }
 
-      res.status(500).json({
-        message: "Something went wrong",
-        specificError: err,
-      });
+        res.status(400).json(error);
+      }
     }
   }
 }
