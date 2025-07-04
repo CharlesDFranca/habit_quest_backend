@@ -49,7 +49,7 @@ describe("FindUserByAliasUseCase unit tests", () => {
     vi.spyOn(mockUserRepository, "findUserByAlias").mockResolvedValueOnce(null);
 
     await expect(() => useCase.execute({ alias: "unknown" })).rejects.toThrow(
-      `User not found by "alias": ${alias.value}`,
+      `User not found by alias: ${alias.value}`,
     );
   });
 });

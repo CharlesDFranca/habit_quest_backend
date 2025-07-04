@@ -2,6 +2,7 @@ import { CreateUserUseCase } from "@/modules/users/app/use-cases/CreateUserUseCa
 import { FindUserByAliasUseCase } from "@/modules/users/app/use-cases/FindUserByAliasUseCase";
 import { FindUserByIdUseCase } from "@/modules/users/app/use-cases/FindUserByIdUseCase";
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
+import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
 import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
 import { Request, Response } from "express";
@@ -26,20 +27,27 @@ export class UserControllers {
         password,
       });
 
-      res.status(201).json({ userId: createdUser.userId.value });
+      const response = ResponseFormatter.success({
+        userId: createdUser.userId.value,
+      });
+
+      res.status(201).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        res.status(400).json({
-          message: "Error when trying to create a new user",
-          errorMessage: err.message,
+        const error = ResponseFormatter.error({
+          name: err.name,
+          message: err.message,
         });
+
+        res.status(400).json(error);
         return;
       }
 
-      res.status(400).json({
-        message: "Error when trying to create a new user",
-        errorMessage: err,
+      const error = ResponseFormatter.error({
+        message: (err as unknown as Error).message,
       });
+
+      res.status(500).json(error);
     }
   }
 
@@ -47,24 +55,27 @@ export class UserControllers {
     const data = req.body;
 
     try {
-      ValidateRequiredFields.use(req.body, ["alia"]);
+      ValidateRequiredFields.use(req.body, ["alias"]);
 
       const findUserByAliasUseCase = container.resolve(FindUserByAliasUseCase);
       const userData = await UseCaseExecutor.run(findUserByAliasUseCase, {
         alias: data.alias,
       });
 
-      res.status(200).json({ userData });
+      const response = ResponseFormatter.success(userData);
+
+      res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        res.status(404).json({ message: err.message, alias: data.alias });
+        const error = ResponseFormatter.error({
+          name: err.name,
+          message: err.message,
+          alias: data.alias,
+        });
+
+        res.status(404).json(error);
         return;
       }
-
-      res
-        .status(404)
-        .json({ message: "User not found by alias", alias: data.alias });
-      return;
     }
   }
 
@@ -78,21 +89,19 @@ export class UserControllers {
         userId: id,
       });
 
-      res.status(200).json({ userData });
+      const reponse = ResponseFormatter.success(userData);
+
+      res.status(200).json(reponse);
     } catch (err) {
       if (err instanceof Error) {
-        res.status(400).json({
-          message: "Something went wrong with the user search",
-          specificError: err.message,
+        const error = ResponseFormatter.error({
+          name: err.name,
+          message: err.message,
         });
+
+        res.status(404).json(error);
         return;
       }
-
-      res.status(500).json({
-        message: "Something went wrong with the user search",
-        specificError: err,
-      });
-      return;
     }
   }
 }

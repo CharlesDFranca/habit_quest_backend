@@ -31,7 +31,7 @@ export class FindUserByAliasUseCase
 
     if (!user) {
       throw new UserNotFoundException(
-        `User not found by "alias": ${alias.value}`,
+        `User not found by alias: ${alias.value}`,
       );
     }
 
