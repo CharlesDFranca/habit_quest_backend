@@ -6,6 +6,8 @@ import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
 import { FindPostsByAuthorIdUseCase } from "../../../app/use-cases/FindPostsByAuthorIdUseCase";
 import { FindPostByIdUseCase } from "../../../app/use-cases/FindPostByIdUseCase";
 import { FindLikedPostsByUserIdUseCase } from "../../../app/use-cases/FindLikedPostsByUserIdUseCase";
+import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
+import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
 
 type FormatedPost = {
   id: string;
@@ -19,24 +21,17 @@ type FormatedPost = {
 
 export class PostController {
   static async createPost(req: Request, res: Response) {
-    const { authorId, content, isPrivate } = req.body;
-
-    const files = req.files as Express.Multer.File[];
-
     try {
-      if (!authorId || !content || !files) {
-        const missingFields = [];
-        if (!authorId) missingFields.push("authorId");
-        if (!content) missingFields.push("content");
-        if (!files) missingFields.push("imagesUrls");
-
-        throw new Error(
-          `Missing required fields: [${missingFields.join(", ")}]`,
-        );
-      }
+      ValidateRequiredFields.use(req.body, [
+        "authorId",
+        "content",
+        "imageUrls",
+      ]);
 
       const createPostUseCase = container.resolve(CreatePostUseCase);
+      const { authorId, content, isPrivate } = req.body;
 
+      const files = req.files as Express.Multer.File[];
       const imagesUrls: ImageInput[] = files.map((file) => {
         return {
           buffer: file.buffer,
@@ -67,11 +62,11 @@ export class PostController {
   }
 
   static async findPostsByAuthorId(req: Request, res: Response) {
-    const { authorId } = req.params;
-
-    const findPostsByAuthorId = container.resolve(FindPostsByAuthorIdUseCase);
-
     try {
+      ValidateRequiredFields.use(req.body, ["authorId"]);
+
+      const { authorId } = req.params;
+      const findPostsByAuthorId = container.resolve(FindPostsByAuthorIdUseCase);
       const posts = await UseCaseExecutor.run(findPostsByAuthorId, {
         authorId,
       });
@@ -122,13 +117,14 @@ export class PostController {
   }
 
   static async findLikedPostsByUserId(req: Request, res: Response) {
-    const { userId } = req.params;
-
     try {
+      ValidateRequiredParameters.use(req.params, ["userId"]);
+
       const findLikedPostsByUserIdUseCase = container.resolve(
         FindLikedPostsByUserIdUseCase,
       );
 
+      const { userId } = req.params;
       const posts = await UseCaseExecutor.run(findLikedPostsByUserIdUseCase, {
         userId,
       });
@@ -148,12 +144,10 @@ export class PostController {
       res.status(200).json({ postsData: formatedPosts });
     } catch (err) {
       if (err instanceof Error) {
-        res
-          .status(400)
-          .json({
-            message: "Something went wrong",
-            specificError: err.message,
-          });
+        res.status(400).json({
+          message: "Something went wrong",
+          specificError: err.message,
+        });
       }
     }
   }

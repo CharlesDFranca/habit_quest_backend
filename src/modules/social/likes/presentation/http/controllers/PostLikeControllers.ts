@@ -2,20 +2,14 @@ import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { LikeAPostUseCase } from "../../../app/use-cases/post-like/LikeAPostUseCase";
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
+import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 
 export class PostLikeControllers {
   static async createLikePost(req: Request, res: Response) {
-    const { userId, postId } = req.body;
-
-    if (!userId || !postId) {
-      const missingFields = [];
-      if (!userId) missingFields.push("userId");
-      if (!postId) missingFields.push("postId");
-
-      throw new Error(`Missing required fields: [${missingFields.join(", ")}]`);
-    }
-
     try {
+      ValidateRequiredFields.use(req.body, ["userId", "postId"]);
+
+      const { userId, postId } = req.body;
       const likeAPostUseCase = container.resolve(LikeAPostUseCase);
 
       const { postLikeId } = await UseCaseExecutor.run(likeAPostUseCase, {

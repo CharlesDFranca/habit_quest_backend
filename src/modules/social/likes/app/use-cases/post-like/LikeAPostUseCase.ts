@@ -5,6 +5,9 @@ import { IPostLikeRepository } from "../../../domain/repositories/IPostLikeRepos
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { IPostRepository } from "@/modules/social/posts/domain/repositories/IPostRepository";
 import { PostLike } from "../../../domain/entities/PostLike";
+import { IEnsureOnePostLikePerUserService } from "../../../domain/services/interfaces/IEnsureOnePostLikePerUserService";
+import { UserNotFoundException } from "@/modules/users/app/errors/UserNotFoundException";
+import { PostNotFoundException } from "@/modules/social/posts/app/errors/PostNotFoundException";
 
 type LikeAPostInput = { userId: string; postId: string };
 type LikeAPostOutput = { postLikeId: Id<"LikeId"> };
@@ -20,6 +23,8 @@ export class LikeAPostUseCase
     private readonly userRepository: IUserRepository,
     @inject("PostRepository")
     private readonly postRepository: IPostRepository,
+    @inject("EnsureOnePostLikePerUserService")
+    private readonly ensureOnePostLikePerUserService: IEnsureOnePostLikePerUserService,
   ) {}
 
   async execute(input: LikeAPostInput): Promise<LikeAPostOutput> {
@@ -29,32 +34,25 @@ export class LikeAPostUseCase
     const userExists = await this.userRepository.findUserById(userId);
 
     if (!userExists) {
-      throw new Error("User not found");
+      throw new UserNotFoundException(`User not found by id: ${userId.value}`);
     }
 
     const postExists = await this.postRepository.findPostById(postId);
 
     if (!postExists) {
-      throw new Error("Post not found");
+      throw new PostNotFoundException(`Post not found by id: ${postId.value}`);
     }
 
-    const alreadyLiked =
-      !!(await this.postLikeRepository.findLikeByUserIdAndPostId(
-        userId,
-        postId,
-      ));
-
-    if (alreadyLiked) {
-      throw new Error("Post already liked!");
-    }
+    await this.ensureOnePostLikePerUserService.assertUserHasNotLikedPost(
+      userId,
+      postId,
+    );
 
     const postLike = PostLike.create({ postId, userId });
 
     await this.postLikeRepository.save(postLike);
 
     postExists.increaseLikeCount();
-
-    console.log(postExists["props"].likeCount);
 
     await this.postRepository.update(postExists);
 

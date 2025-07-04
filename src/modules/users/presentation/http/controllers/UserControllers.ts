@@ -2,28 +2,23 @@ import { CreateUserUseCase } from "@/modules/users/app/use-cases/CreateUserUseCa
 import { FindUserByAliasUseCase } from "@/modules/users/app/use-cases/FindUserByAliasUseCase";
 import { FindUserByIdUseCase } from "@/modules/users/app/use-cases/FindUserByIdUseCase";
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
+import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
+import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 
 export class UserControllers {
   static async createUser(req: Request, res: Response) {
-    const { email, alias, name, password } = req.body;
-
-    const createUserUseCase = container.resolve(CreateUserUseCase);
-
     try {
-      if (!email || !alias || !name || !password) {
-        const missingFields = [];
-        if (!email) missingFields.push("email");
-        if (!alias) missingFields.push("alias");
-        if (!name) missingFields.push("name");
-        if (!password) missingFields.push("password");
+      ValidateRequiredFields.use(req.body, [
+        "email",
+        "name",
+        "alias",
+        "password",
+      ]);
 
-        throw new Error(
-          `Missing required fields: [${missingFields.join(", ")}]`,
-        );
-      }
-
+      const { email, alias, name, password } = req.body;
+      const createUserUseCase = container.resolve(CreateUserUseCase);
       const createdUser = await UseCaseExecutor.run(createUserUseCase, {
         alias,
         email,
@@ -51,9 +46,10 @@ export class UserControllers {
   static async findUserByAlias(req: Request, res: Response) {
     const data = req.body;
 
-    const findUserByAliasUseCase = container.resolve(FindUserByAliasUseCase);
-
     try {
+      ValidateRequiredFields.use(req.body, ["alia"]);
+
+      const findUserByAliasUseCase = container.resolve(FindUserByAliasUseCase);
       const userData = await UseCaseExecutor.run(findUserByAliasUseCase, {
         alias: data.alias,
       });
@@ -73,15 +69,11 @@ export class UserControllers {
   }
 
   static async findUserById(req: Request, res: Response) {
-    const { id } = req.params;
-
     try {
-      if (!id) {
-        throw new Error("User id is required");
-      }
+      ValidateRequiredParameters.use(req.params, ["id"]);
 
+      const { id } = req.params;
       const findUserByIdUseCase = container.resolve(FindUserByIdUseCase);
-
       const userData = await UseCaseExecutor.run(findUserByIdUseCase, {
         userId: id,
       });
