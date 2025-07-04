@@ -1,3 +1,5 @@
+import { ErrorResponse } from "./types/ErrorResponse";
+
 export class ResponseFormatter {
   private constructor() {}
 
@@ -16,7 +18,7 @@ export class ResponseFormatter {
   }
 
   static error(
-    errors: Record<string, unknown>,
+    errors: ErrorResponse,
     meta?: Record<string, unknown>,
     message = "An error occurred during the operation.",
   ) {

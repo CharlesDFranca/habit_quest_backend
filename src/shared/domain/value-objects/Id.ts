@@ -1,3 +1,4 @@
+import { InvalidValueObjectException } from "../errors/InvalidValueObjectException";
 import { IdGenerator } from "../services/IdGenerator";
 import { IIdGenerator } from "../services/intefaces/IIdGenerator";
 import { ValueObject } from "./ValueObject";
@@ -23,14 +24,16 @@ export class Id<T extends IdType> extends ValueObject<IdProps> {
     const id = props.value.trim();
 
     if (id.length === 0) {
-      throw new Error("Id cannot be empty");
+      throw new InvalidValueObjectException("Id cannot be empty");
     }
 
     const ID_REGEX =
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
 
     if (!ID_REGEX.test(id)) {
-      throw new Error("Invalid Id format. Id must be a UUID.");
+      throw new InvalidValueObjectException(
+        "Invalid Id format. Id must be a UUID.",
+      );
     }
 
     return true;

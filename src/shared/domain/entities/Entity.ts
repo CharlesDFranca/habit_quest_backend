@@ -1,3 +1,4 @@
+import { InvalidEntityTimestampsException } from "../errors/InvalidEntityTimestampsException";
 import { Id, IdType } from "../value-objects/Id";
 
 export abstract class Entity<T extends IdType> {
@@ -14,7 +15,7 @@ export abstract class Entity<T extends IdType> {
       _updatedAt !== undefined &&
       _createdAt.getTime() > _updatedAt.getTime()
     ) {
-      throw new Error("Entity creation date cannot be after updated date");
+      throw new InvalidEntityTimestampsException();
     }
 
     this._createdAt = _createdAt ?? new Date();

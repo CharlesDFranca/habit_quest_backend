@@ -9,6 +9,7 @@ import { FindLikedPostsByUserIdUseCase } from "../../../app/use-cases/FindLikedP
 import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
 import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
+import { HttpErrorMapper } from "@/shared/presentation/http/HttpErrorMapper";
 
 type FormatedPost = {
   id: string;
@@ -55,12 +56,8 @@ export class PostControllers {
       res.status(201).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        const error = ResponseFormatter.error({
-          name: err.name,
-          message: err.message,
-        });
-
-        res.status(400).json(error);
+        const error = HttpErrorMapper.toErrorResponse(err);
+        res.status(400).json(ResponseFormatter.error(error));
         return;
       }
     }
@@ -96,12 +93,8 @@ export class PostControllers {
       res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        const error = ResponseFormatter.error({
-          name: err.name,
-          message: err.message,
-        });
-
-        res.status(400).json(error);
+        const error = HttpErrorMapper.toErrorResponse(err);
+        res.status(400).json(ResponseFormatter.error(error));
       }
     }
   }
@@ -120,12 +113,8 @@ export class PostControllers {
       res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        const error = ResponseFormatter.error({
-          name: err.name,
-          message: err.message,
-        });
-
-        res.status(400).json(error);
+        const error = HttpErrorMapper.toErrorResponse(err);
+        res.status(400).json(ResponseFormatter.error(error));
       }
     }
   }
@@ -162,12 +151,8 @@ export class PostControllers {
       res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        const error = ResponseFormatter.error({
-          name: err.name,
-          message: err.message,
-        });
-
-        res.status(400).json(error);
+        const error = HttpErrorMapper.toErrorResponse(err);
+        res.status(400).json(ResponseFormatter.error(error));
       }
     }
   }

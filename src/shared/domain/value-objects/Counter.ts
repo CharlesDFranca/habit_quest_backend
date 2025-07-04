@@ -1,3 +1,4 @@
+import { InvalidValueObjectException } from "../errors/InvalidValueObjectException";
 import { ValueObject } from "./ValueObject";
 
 type CounterProps = { value: number };
@@ -9,11 +10,13 @@ export class Counter extends ValueObject<CounterProps> {
 
   protected validate(props: CounterProps): boolean {
     if (isNaN(Number(props.value))) {
-      throw new Error("The Counter needs to be a number");
+      throw new InvalidValueObjectException("The Counter needs to be a number");
     }
 
     if (props.value < 0) {
-      throw new Error("The Counter cannot be less than zero");
+      throw new InvalidValueObjectException(
+        "The Counter cannot be less than zero",
+      );
     }
 
     return true;
@@ -33,7 +36,7 @@ export class Counter extends ValueObject<CounterProps> {
 
   decrementBy(amount: number): Counter {
     if (amount > this.value) {
-      throw new Error(
+      throw new InvalidValueObjectException(
         "It is not possible to decrement if the value to be subtracted is greater than the current value of the counter",
       );
     }

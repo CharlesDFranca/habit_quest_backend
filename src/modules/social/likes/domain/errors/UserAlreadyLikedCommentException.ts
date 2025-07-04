@@ -1,4 +1,4 @@
-import { DomainError } from "@/shared/domain/erros/DomainError";
+import { DomainError } from "@/shared/domain/errors/DomainError";
 import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
 
 export class UserAlreadyLikedCommentException extends DomainError {

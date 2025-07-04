@@ -4,6 +4,7 @@ import { LikeAPostUseCase } from "../../../app/use-cases/post-like/LikeAPostUseC
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
 import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
+import { HttpErrorMapper } from "@/shared/presentation/http/HttpErrorMapper";
 
 export class PostLikeControllers {
   static async createLikePost(req: Request, res: Response) {
@@ -28,12 +29,9 @@ export class PostLikeControllers {
       res.status(201).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        const error = ResponseFormatter.error({
-          name: err.name,
-          message: err.message,
-        });
+        const error = HttpErrorMapper.toErrorResponse(err);
 
-        res.status(400).json(error);
+        res.status(400).json(ResponseFormatter.error(error));
       }
     }
   }

@@ -2,6 +2,7 @@ import { CreateUserUseCase } from "@/modules/users/app/use-cases/CreateUserUseCa
 import { FindUserByAliasUseCase } from "@/modules/users/app/use-cases/FindUserByAliasUseCase";
 import { FindUserByIdUseCase } from "@/modules/users/app/use-cases/FindUserByIdUseCase";
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
+import { HttpErrorMapper } from "@/shared/presentation/http/HttpErrorMapper";
 import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
 import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
@@ -34,20 +35,11 @@ export class UserControllers {
       res.status(201).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        const error = ResponseFormatter.error({
-          name: err.name,
-          message: err.message,
-        });
+        const error = HttpErrorMapper.toErrorResponse(err);
 
-        res.status(400).json(error);
+        res.status(400).json(ResponseFormatter.error(error));
         return;
       }
-
-      const error = ResponseFormatter.error({
-        message: (err as unknown as Error).message,
-      });
-
-      res.status(500).json(error);
     }
   }
 
@@ -67,13 +59,9 @@ export class UserControllers {
       res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        const error = ResponseFormatter.error({
-          name: err.name,
-          message: err.message,
-          alias: data.alias,
-        });
+        const error = HttpErrorMapper.toErrorResponse(err);
 
-        res.status(404).json(error);
+        res.status(400).json(ResponseFormatter.error(error));
         return;
       }
     }
@@ -94,12 +82,9 @@ export class UserControllers {
       res.status(200).json(response);
     } catch (err) {
       if (err instanceof Error) {
-        const error = ResponseFormatter.error({
-          name: err.name,
-          message: err.message,
-        });
+        const error = HttpErrorMapper.toErrorResponse(err);
 
-        res.status(404).json(error);
+        res.status(404).json(ResponseFormatter.error(error));
         return;
       }
     }

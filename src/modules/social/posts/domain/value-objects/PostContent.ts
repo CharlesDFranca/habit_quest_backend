@@ -1,4 +1,4 @@
-import { InvalidValueObjectException } from "@/shared/domain/erros/InvalidValueObjectException";
+import { InvalidValueObjectException } from "@/shared/domain/errors/InvalidValueObjectException";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type PostContentProps = { value: string };

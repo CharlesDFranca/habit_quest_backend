@@ -1,4 +1,4 @@
-import { DomainError } from "@/shared/domain/erros/DomainError";
+import { DomainError } from "@/shared/domain/errors/DomainError";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
 
