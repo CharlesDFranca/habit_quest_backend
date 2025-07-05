@@ -3,7 +3,12 @@ import { IdGenerator } from "../services/IdGenerator";
 import { IIdGenerator } from "../services/intefaces/IIdGenerator";
 import { ValueObject } from "./ValueObject";
 
-export type IdType = "UserId" | "PostId" | "CommentId" | "LikeId";
+export type IdType =
+  | "UserId"
+  | "PostId"
+  | "CommentId"
+  | "LikeId"
+  | "BlockedUserId";
 
 type IdProps = { value: string };
 
