@@ -1,3 +1,4 @@
+import { ApiResponse } from "./types/ApiReponse";
 import { ErrorResponse } from "./types/ErrorResponse";
 
 export class ResponseFormatter {
@@ -7,7 +8,7 @@ export class ResponseFormatter {
     data: T,
     meta?: Record<string, unknown>,
     message = "Operation carried out successfully.",
-  ) {
+  ): ApiResponse<T> {
     return {
       sucess: true,
       data,
