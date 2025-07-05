@@ -1,4 +1,4 @@
-import "reflect-metadata"
+import "reflect-metadata";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { FindPostByIdUseCase } from "@/modules/social/posts/app/use-cases/FindPostByIdUseCase";
 import { IPostRepository } from "@/modules/social/posts/domain/repositories/IPostRepository";
@@ -48,11 +48,13 @@ describe("FindPostByIdUseCase", () => {
     const output = await useCase.execute({ postId: postId.value });
 
     expect(output).toEqual({
-      postId: postId.value,
-      authorId: authorId.value,
+      postId: mockPost.id.value,
+      authorId: mockPost.authorId.value,
       content: "This is a post",
       commentCount: 3,
       likeCount: 10,
+      isPinned: mockPost.isPinned,
+      isPrivate: mockPost.isPrivate,
       images: ["image1.jpg", "image2.png"],
       createdAt,
       updatedAt,

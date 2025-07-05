@@ -3,18 +3,11 @@ import { IPostRepository } from "../../domain/repositories/IPostRepository";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { inject, injectable } from "tsyringe";
 import { PostNotFoundException } from "../errors/PostNotFoundException";
+import { PostDetailsDto } from "../dtos/PostDetailsDto";
+import { PostMapper } from "../mappers/PostMapper";
 
 type FindPostByIdInput = { postId: string };
-type FindPostByIdOutput = {
-  postId: string;
-  authorId: string;
-  content: string;
-  images: string[];
-  commentCount: number;
-  likeCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
+type FindPostByIdOutput = PostDetailsDto;
 
 @injectable()
 export class FindPostByIdUseCase
@@ -34,15 +27,6 @@ export class FindPostByIdUseCase
       throw new PostNotFoundException(`Post not found by id: ${postId.value}`);
     }
 
-    return {
-      postId: post.id.value,
-      authorId: post.authorId.value,
-      content: post.content.value,
-      commentCount: post.commentCount.value,
-      likeCount: post.likeCount.value,
-      images: post.images.map((image) => image.value),
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-    };
+    return PostMapper.toDetails(post);
   }
 }

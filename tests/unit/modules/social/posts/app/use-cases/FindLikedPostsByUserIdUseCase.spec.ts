@@ -9,6 +9,7 @@ import { PostContent } from "@/modules/social/posts/domain/value-objects/PostCon
 import { Counter } from "@/shared/domain/value-objects/Counter";
 import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
 import { randomUUID } from "node:crypto";
+import { PostMapper } from "@/modules/social/posts/app/mappers/PostMapper";
 
 describe("FindLikedPostsByUserIdUseCase", () => {
   let userRepo: IUserRepository;
@@ -53,7 +54,7 @@ describe("FindLikedPostsByUserIdUseCase", () => {
   it("should return liked posts for a valid user", async () => {
     const result = await useCase.execute({ userId: userId.value });
 
-    expect(result).toEqual(mockPosts);
+    expect(result).toEqual(mockPosts.map((post) => PostMapper.toDetails(post)));
     expect(userRepo.findUserById).toHaveBeenCalledOnce();
     expect(postRepo.findLikedPostsByUserId).toHaveBeenCalledOnce();
     expect(postRepo.findLikedPostsByUserId).toHaveBeenCalledWith(userId);

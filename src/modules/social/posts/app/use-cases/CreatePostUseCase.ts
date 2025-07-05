@@ -12,6 +12,8 @@ import {
   IImageStorageService,
 } from "@/shared/app/interfaces/IImageStorageService";
 import { UserNotFoundException } from "@/modules/users/app/errors/UserNotFoundException";
+import { PostMapper } from "../mappers/PostMapper";
+import { PostIdDto } from "../dtos/PostIdDto";
 
 type CreatePostInput = {
   authorId: string;
@@ -20,7 +22,7 @@ type CreatePostInput = {
   imagesUrls: ImageInput[];
 };
 
-type CreatePostOutput = { postId: Id<"PostId"> };
+type CreatePostOutput = PostIdDto;
 
 @injectable()
 export class CreatePostUseCase
@@ -70,7 +72,7 @@ export class CreatePostUseCase
 
     await this.postRepository.save(post);
 
-    return { postId: post.id };
+    return PostMapper.toId(post);
   }
 
   async rollback(): Promise<void> {

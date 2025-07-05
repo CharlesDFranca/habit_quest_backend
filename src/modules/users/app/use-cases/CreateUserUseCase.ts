@@ -9,8 +9,8 @@ import { Email } from "../../domain/value-objects/Email";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 import { Password } from "../../domain/value-objects/Password";
 import { inject, injectable } from "tsyringe";
-import { UserIdDto } from "../dtos/UserIdDTO";
 import { UserMapper } from "../mappers/UserMapper";
+import { UserIdDto } from "../dtos/UserIdDTO";
 
 type CreateUserInput = {
   name: string;

@@ -3,11 +3,12 @@ import { IPostRepository } from "../../domain/repositories/IPostRepository";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { inject, injectable } from "tsyringe";
 import { Id } from "@/shared/domain/value-objects/Id";
-import { Post } from "../../domain/entities/Post";
 import { UserNotFoundException } from "@/modules/users/app/errors/UserNotFoundException";
+import { PostDetailsDto } from "../dtos/PostDetailsDto";
+import { PostMapper } from "../mappers/PostMapper";
 
 type FindLikedPostsByUserIdInput = { userId: string };
-type FindLikedPostsByUserIdOutput = Post[];
+type FindLikedPostsByUserIdOutput = PostDetailsDto[];
 
 @injectable()
 export class FindLikedPostsByUserIdUseCase
@@ -33,6 +34,6 @@ export class FindLikedPostsByUserIdUseCase
 
     const likedPosts = await this.postRepository.findLikedPostsByUserId(userId);
 
-    return likedPosts;
+    return likedPosts.map((likedPost) => PostMapper.toDetails(likedPost));
   }
 }

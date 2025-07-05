@@ -67,7 +67,7 @@ describe("FindPostsByAuthorIdUseCase", () => {
     const output = await useCase.execute({ authorId: userId.value });
 
     expect(output).toHaveLength(2);
-    expect(output[0].content.value).toBe("Post 1");
+    expect(output[0].content).toBe("Post 1");
     expect(output[1].isPinned).toBe(true);
   });
 

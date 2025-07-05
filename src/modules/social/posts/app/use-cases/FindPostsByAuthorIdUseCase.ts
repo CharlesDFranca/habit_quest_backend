@@ -1,13 +1,14 @@
 import { IUseCase } from "@/shared/app/interfaces/IUseCase";
-import { Post } from "../../domain/entities/Post";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { IPostRepository } from "../../domain/repositories/IPostRepository";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { inject, injectable } from "tsyringe";
 import { UserNotFoundException } from "@/modules/users/app/errors/UserNotFoundException";
+import { PostDetailsDto } from "../dtos/PostDetailsDto";
+import { PostMapper } from "../mappers/PostMapper";
 
 type FindPostsByAuthorIdInput = { authorId: string };
-type FindPostsByAuthorIdOutput = Post[];
+type FindPostsByAuthorIdOutput = PostDetailsDto[];
 
 @injectable()
 export class FindPostsByAuthorIdUseCase
@@ -33,6 +34,8 @@ export class FindPostsByAuthorIdUseCase
       );
     }
 
-    return this.postRepository.findPostsByAuthorId(authorId);
+    const posts = await this.postRepository.findPostsByAuthorId(authorId);
+
+    return posts.map((post) => PostMapper.toDetails(post));
   }
 }
