@@ -5,7 +5,7 @@ import { PostContent } from "../../domain/value-objects/PostContent";
 import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
 import { Counter } from "@/shared/domain/value-objects/Counter";
 
-export class PostMapper {
+export class PostPrimaMapper {
   private constructor() {}
 
   static toDomain(postPersistedData: PostPrisma): Post {

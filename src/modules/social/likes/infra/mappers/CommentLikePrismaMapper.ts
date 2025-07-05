@@ -2,7 +2,7 @@ import { CommentLike as PrismaCommentLike } from "generated/prisma";
 import { CommentLike } from "../../domain/entities/CommentLike";
 import { Id } from "@/shared/domain/value-objects/Id";
 
-export class CommentLikeMapper {
+export class CommentLikePrismaMapper {
   static toDomain(persistedCommentLike: PrismaCommentLike): CommentLike {
     const commentId = Id.create<"CommentId">({
       value: persistedCommentLike.commentId,

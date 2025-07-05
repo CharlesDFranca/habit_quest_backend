@@ -2,7 +2,7 @@ import { PostLike as PrismaPostLike } from "generated/prisma";
 import { PostLike } from "../../domain/entities/PostLike";
 import { Id } from "@/shared/domain/value-objects/Id";
 
-export class PostLikeMapper {
+export class PostLikePrismaMapper {
   static toDomain(persistedPostLike: PrismaPostLike): PostLike {
     const postId = Id.create<"PostId">({ value: persistedPostLike.postId });
     const userId = Id.create<"UserId">({ value: persistedPostLike.userId });

@@ -2,17 +2,17 @@ import { Id } from "@/shared/domain/value-objects/Id";
 import { CommentLike } from "../../domain/entities/CommentLike";
 import { ICommentLikeRepository } from "../../domain/repositories/ICommentLikeRepository";
 import { prisma } from "@/shared/infra/database/PrismaClient";
-import { CommentLikeMapper } from "../mappers/CommentLikeMapper";
+import { CommentLikePrismaMapper } from "../mappers/CommentLikePrismaMapper";
 import { injectable } from "tsyringe";
 
 @injectable()
 export class PrismaCommentLikeRepository implements ICommentLikeRepository {
   async save(commentLike: CommentLike): Promise<CommentLike> {
     const commentLiked = await prisma.commentLike.create({
-      data: CommentLikeMapper.toPersistence(commentLike),
+      data: CommentLikePrismaMapper.toPersistence(commentLike),
     });
 
-    return CommentLikeMapper.toDomain(commentLiked);
+    return CommentLikePrismaMapper.toDomain(commentLiked);
   }
 
   async findLikeByUserIdAndCommentId(
@@ -25,6 +25,6 @@ export class PrismaCommentLikeRepository implements ICommentLikeRepository {
 
     if (!like) return null;
 
-    return CommentLikeMapper.toDomain(like);
+    return CommentLikePrismaMapper.toDomain(like);
   }
 }

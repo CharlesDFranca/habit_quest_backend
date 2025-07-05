@@ -3,7 +3,7 @@ import { User } from "../../domain/entities/User";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { Email } from "../../domain/value-objects/Email";
 
-import { UserMapper } from "../mappers/UserMapper";
+import { UserPrismaMapper } from "../mappers/UserPrismaMapper";
 
 import { prisma } from "@/shared/infra/database/PrismaClient";
 import { injectable } from "tsyringe";
@@ -13,10 +13,10 @@ import { Id } from "@/shared/domain/value-objects/Id";
 export class PrismaUserRepository implements IUserRepository {
   async save(user: User): Promise<User> {
     const newUser = await prisma.user.create({
-      data: UserMapper.toPersistence(user),
+      data: UserPrismaMapper.toPersistence(user),
     });
 
-    return UserMapper.toDomain(newUser);
+    return UserPrismaMapper.toDomain(newUser);
   }
 
   async findUserByAlias(alias: Alias): Promise<User | null> {
@@ -26,7 +26,7 @@ export class PrismaUserRepository implements IUserRepository {
 
     if (!userExists) return null;
 
-    return UserMapper.toDomain(userExists);
+    return UserPrismaMapper.toDomain(userExists);
   }
 
   async findUserByEmail(email: Email): Promise<User | null> {
@@ -36,7 +36,7 @@ export class PrismaUserRepository implements IUserRepository {
 
     if (!userExists) return null;
 
-    return UserMapper.toDomain(userExists);
+    return UserPrismaMapper.toDomain(userExists);
   }
 
   async findUserById(id: Id<"UserId">): Promise<User | null> {
@@ -46,6 +46,6 @@ export class PrismaUserRepository implements IUserRepository {
 
     if (!userExists) return null;
 
-    return UserMapper.toDomain(userExists);
+    return UserPrismaMapper.toDomain(userExists);
   }
 }

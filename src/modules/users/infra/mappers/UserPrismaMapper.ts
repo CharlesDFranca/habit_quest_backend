@@ -6,7 +6,7 @@ import { Email } from "../../domain/value-objects/Email";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 import { Password } from "../../domain/value-objects/Password";
 
-export class UserMapper {
+export class UserPrismaMapper {
   private constructor() {}
 
   static toDomain(userPersistedData: UserPrisma) {
