@@ -27,6 +27,8 @@ model User {
   comments     Comment[]
   postLikes    PostLike[]
   commentLikes CommentLike[]
+  blockedUser  BlockedUser[] @relation("blocker")
+  blockedBy    BlockedUser[] @relation("blocked")
 
   @@map("user")
 }
@@ -93,4 +95,16 @@ model CommentLike {
 
   @@unique([userId, commentId])
   @@map("comment_like")
+}
+
+model BlockedUser {
+  id        String   @id
+  blockerId String
+  blockedId String
+  blockedAt DateTime @default(now())
+
+  blocker User @relation("blocker", fields: [blockerId], references: [id])
+  blocked User @relation("blocked", fields: [blockedId], references: [id])
+
+  @@unique([blockerId, blockedId])
 }
