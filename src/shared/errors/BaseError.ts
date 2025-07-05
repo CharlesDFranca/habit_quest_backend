@@ -1,5 +1,6 @@
 export abstract class BaseError extends Error {
   abstract code: string;
+  details? = {};
 
   constructor(message: string) {
     super(message);
