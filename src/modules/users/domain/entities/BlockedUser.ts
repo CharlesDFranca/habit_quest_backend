@@ -16,6 +16,14 @@ export class BlockedUser extends Entity<"BlockedUserId"> {
     super(blockedUserId);
   }
 
+  static create(
+    props: BlockedUserProps,
+    _id?: Id<"BlockedUserId">,
+  ): BlockedUser {
+    const id = _id ?? Id.generate<"BlockedUserId">();
+    return new BlockedUser(id, props);
+  }
+
   get blockdBy(): Id<"UserId"> {
     return this.props.blockedBy;
   }
