@@ -18,22 +18,32 @@ export class PrismaBlockedUserRepository implements IBlockedUserRepository {
     }
   }
 
-  async unlockUser(blockedUser: BlockedUser): Promise<void> {
-    await prisma.blockedUser.delete({ where: { id: blockedUser.id.value } });
+  async unlockUser(
+    blockedUser: Id<"UserId">,
+    blockedBy: Id<"UserId">,
+  ): Promise<void> {
+    await prisma.blockedUser.delete({
+      where: {
+        blockerId_blockedId: {
+          blockedId: blockedUser.value,
+          blockerId: blockedBy.value,
+        },
+      },
+    });
   }
 
   async isBlocked(
-    blockerBy: Id<"UserId">,
+    blockedBy: Id<"UserId">,
     blockedUser: Id<"UserId">,
   ): Promise<boolean> {
     const isBlocked = await prisma.blockedUser.findUnique({
       where: {
         blockerId_blockedId: {
-          blockerId: blockerBy.value,
+          blockerId: blockedBy.value,
           blockedId: blockedUser.value,
         },
       },
-      select: {},
+      select: { id: true },
     });
 
     return !!isBlocked;
