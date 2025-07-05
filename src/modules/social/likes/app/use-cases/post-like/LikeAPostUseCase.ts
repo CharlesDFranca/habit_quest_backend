@@ -8,9 +8,11 @@ import { PostLike } from "../../../domain/entities/PostLike";
 import { IEnsureOnePostLikePerUserService } from "../../../domain/services/interfaces/IEnsureOnePostLikePerUserService";
 import { UserNotFoundException } from "@/modules/users/app/errors/UserNotFoundException";
 import { PostNotFoundException } from "@/modules/social/posts/app/errors/PostNotFoundException";
+import { PostLikeIdDto } from "../../dtos/PostLikeIdDto";
+import { PostLikeMapper } from "../../mappers/PostLikeMapper";
 
 type LikeAPostInput = { userId: string; postId: string };
-type LikeAPostOutput = { postLikeId: Id<"LikeId"> };
+type LikeAPostOutput = PostLikeIdDto;
 
 @injectable()
 export class LikeAPostUseCase
@@ -56,6 +58,6 @@ export class LikeAPostUseCase
 
     await this.postRepository.update(postExists);
 
-    return { postLikeId: postLike.id };
+    return PostLikeMapper.toId(postLike);
   }
 }
