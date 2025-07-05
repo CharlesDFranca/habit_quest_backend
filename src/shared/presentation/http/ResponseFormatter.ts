@@ -3,8 +3,8 @@ import { ErrorResponse } from "./types/ErrorResponse";
 export class ResponseFormatter {
   private constructor() {}
 
-  static success(
-    data: unknown,
+  static success<T>(
+    data: T,
     meta?: Record<string, unknown>,
     message = "Operation carried out successfully.",
   ) {

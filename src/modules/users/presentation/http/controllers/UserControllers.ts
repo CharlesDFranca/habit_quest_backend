@@ -1,12 +1,15 @@
 import { CreateUserUseCase } from "@/modules/users/app/use-cases/CreateUserUseCase";
+import { UserIdDto } from "@/modules/users/app/dtos/UserIdDTO";
 import { FindUserByAliasUseCase } from "@/modules/users/app/use-cases/FindUserByAliasUseCase";
 import { FindUserByIdUseCase } from "@/modules/users/app/use-cases/FindUserByIdUseCase";
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
 import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
+import { ApiResponse } from "@/shared/presentation/http/types/ApiReponse";
 import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
 import { Request, Response } from "express";
 import { container } from "tsyringe";
+import { UserDetailsDto } from "@/modules/users/app/dtos/UserDetailsDTO";
 
 export class UserControllers {
   static async createUser(req: Request, res: Response) {
@@ -26,7 +29,8 @@ export class UserControllers {
       password,
     });
 
-    const response = ResponseFormatter.success(userId);
+    const response: ApiResponse<UserIdDto> =
+      ResponseFormatter.success<UserIdDto>(userId);
 
     res.status(201).json(response);
   }
@@ -41,7 +45,8 @@ export class UserControllers {
       alias: data.alias,
     });
 
-    const response = ResponseFormatter.success(userData);
+    const response: ApiResponse<UserDetailsDto> =
+      ResponseFormatter.success<UserDetailsDto>(userData);
 
     res.status(200).json(response);
   }
@@ -55,7 +60,8 @@ export class UserControllers {
       userId: id,
     });
 
-    const response = ResponseFormatter.success(userData);
+    const response: ApiResponse<UserDetailsDto> =
+      ResponseFormatter.success<UserDetailsDto>(userData);
 
     res.status(200).json(response);
   }

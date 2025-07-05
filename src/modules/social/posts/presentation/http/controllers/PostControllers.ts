@@ -9,6 +9,9 @@ import { FindLikedPostsByUserIdUseCase } from "../../../app/use-cases/FindLikedP
 import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
 import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
+import { ApiResponse } from "@/shared/presentation/http/types/ApiReponse";
+import { PostIdDto } from "../../../app/dtos/PostIdDto";
+import { PostDetailsDto } from "../../../app/dtos/PostDetailsDto";
 
 export class PostControllers {
   static async createPost(req: Request, res: Response) {
@@ -33,7 +36,8 @@ export class PostControllers {
       isPrivate: isPrivate === "true",
     });
 
-    const response = ResponseFormatter.success(postId);
+    const response: ApiResponse<PostIdDto> =
+      ResponseFormatter.success<PostIdDto>(postId);
 
     res.status(201).json(response);
   }
@@ -47,7 +51,9 @@ export class PostControllers {
       authorId,
     });
 
-    const response = ResponseFormatter.success(posts, {
+    const response: ApiResponse<PostDetailsDto[]> = ResponseFormatter.success<
+      PostDetailsDto[]
+    >(posts, {
       postsCount: posts.length,
     });
 
@@ -62,7 +68,8 @@ export class PostControllers {
     const { postId } = req.body;
     const post = await UseCaseExecutor.run(findPostByIdUseCase, { postId });
 
-    const response = ResponseFormatter.success(post);
+    const response: ApiResponse<PostDetailsDto> =
+      ResponseFormatter.success<PostDetailsDto>(post);
 
     res.status(200).json(response);
   }
@@ -78,7 +85,9 @@ export class PostControllers {
     const posts = await UseCaseExecutor.run(findLikedPostsByUserIdUseCase, {
       userId,
     });
-    const response = ResponseFormatter.success(posts, {
+    const response: ApiResponse<PostDetailsDto[]> = ResponseFormatter.success<
+      PostDetailsDto[]
+    >(posts, {
       likedPostsCount: posts.length,
     });
 
