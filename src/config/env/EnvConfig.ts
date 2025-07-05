@@ -4,49 +4,75 @@ import {
   StorageDrivers,
   validStorageDrivers,
 } from "../types/StorageDriversTypes";
+import { MissingEnvVariableException } from "../errors/MissingEnvVariableException";
+import { InvalidEnvVariableException } from "../errors/InvalidEnvVariableException";
 
 class EnvConfig implements IEnvConfig {
   getPort(): number {
     const PORT = process.env.PORT;
 
-    if (isNaN(Number(PORT))) {
-      throw new Error("PORT needs to be a number");
+    if (!PORT) {
+      throw new MissingEnvVariableException("PORT");
     }
 
-    if (Number(PORT) < 0) {
-      throw new Error("PORT cannot be less than zero");
+    const portNum = Number(PORT);
+
+    if (isNaN(portNum)) {
+      throw new InvalidEnvVariableException("PORT", "It must be a number.");
     }
 
-    return Number(PORT);
+    if (portNum < 0) {
+      throw new InvalidEnvVariableException("PORT", "It cannot be negative.");
+    }
+
+    return portNum;
   }
 
   getSaltRounds(): number {
     const SALT_ROUNDS = process.env.SALT_ROUNDS;
 
-    if (isNaN(Number(SALT_ROUNDS))) {
-      throw new Error("SALT_ROUNDS needs to be a number");
+    if (!SALT_ROUNDS) {
+      throw new MissingEnvVariableException("SALT_ROUNDS");
     }
 
-    if (Number(SALT_ROUNDS) < 0) {
-      throw new Error("SALT_ROUNDS cannot be less than zero");
+    const saltNum = Number(SALT_ROUNDS);
+
+    if (isNaN(saltNum)) {
+      throw new InvalidEnvVariableException(
+        "SALT_ROUNDS",
+        "It must be a number.",
+      );
     }
 
-    return Number(SALT_ROUNDS);
+    if (saltNum < 0) {
+      throw new InvalidEnvVariableException(
+        "SALT_ROUNDS",
+        "It cannot be negative.",
+      );
+    }
+
+    return saltNum;
   }
 
   getStorageDriver(): StorageDrivers {
     const STORAGE_DRIVER = process.env.STORAGE_DRIVER;
 
     if (!STORAGE_DRIVER) {
-      throw new Error("STORAGE_DRIVER cannot be empty");
+      throw new MissingEnvVariableException("STORAGE_DRIVER");
     }
 
     if (typeof STORAGE_DRIVER !== "string") {
-      throw new Error("STORAGE_DRIVER needs to be a string");
+      throw new InvalidEnvVariableException(
+        "STORAGE_DRIVER",
+        "It must be a string.",
+      );
     }
 
     if (!validStorageDrivers.includes(STORAGE_DRIVER as StorageDrivers)) {
-      throw new Error("STORAGE_DRIVER invalid");
+      throw new InvalidEnvVariableException(
+        "STORAGE_DRIVER",
+        `Must be one of: [${validStorageDrivers.join(", ")}]`,
+      );
     }
 
     return STORAGE_DRIVER as StorageDrivers;

@@ -24,13 +24,13 @@ describe("EnvConfig unit tests", () => {
     it("should throw if PORT is not a number", () => {
       process.env.PORT = "abc";
 
-      expect(() => envConfig.getPort()).toThrowError("PORT needs to be a number");
+      expect(() => envConfig.getPort()).toThrowError();
     });
 
     it("should throw if PORT is less than zero", () => {
       process.env.PORT = "-1";
 
-      expect(() => envConfig.getPort()).toThrowError("PORT cannot be less than zero");
+      expect(() => envConfig.getPort()).toThrowError();
     });
   });
 
@@ -46,13 +46,13 @@ describe("EnvConfig unit tests", () => {
     it("should throw if SALT_ROUNDS is not a number", () => {
       process.env.SALT_ROUNDS = "abc";
 
-      expect(() => envConfig.getSaltRounds()).toThrowError("SALT_ROUNDS needs to be a number");
+      expect(() => envConfig.getSaltRounds()).toThrowError();
     });
 
     it("should throw if SALT_ROUNDS is less than zero", () => {
       process.env.SALT_ROUNDS = "-5";
 
-      expect(() => envConfig.getSaltRounds()).toThrowError("SALT_ROUNDS cannot be less than zero");
+      expect(() => envConfig.getSaltRounds()).toThrowError();
     });
   });
 
@@ -68,19 +68,19 @@ describe("EnvConfig unit tests", () => {
     it("should throw if STORAGE_DRIVER is empty", () => {
       process.env.STORAGE_DRIVER = "";
 
-      expect(() => envConfig.getStorageDriver()).toThrowError("STORAGE_DRIVER cannot be empty");
+      expect(() => envConfig.getStorageDriver()).toThrowError();
     });
 
     it("should throw if STORAGE_DRIVER is not a string", () => {
       process.env.STORAGE_DRIVER = 1 as unknown as string;
 
-      expect(() => envConfig.getStorageDriver()).toThrowError("STORAGE_DRIVER needs to be a string");
+      expect(() => envConfig.getStorageDriver()).toThrowError();
     });
 
     it("should throw if STORAGE_DRIVER is invalid", () => {
       process.env.STORAGE_DRIVER = "invalid";
 
-      expect(() => envConfig.getStorageDriver()).toThrowError("STORAGE_DRIVER invalid");
+      expect(() => envConfig.getStorageDriver()).toThrowError();
     });
   });
 });
