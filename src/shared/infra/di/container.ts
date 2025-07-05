@@ -21,6 +21,8 @@ import { IEnsureOneCommentLikePerUserService } from "@/modules/social/likes/doma
 import { EnsureOneCommentLikePerUserService } from "@/modules/social/likes/domain/services/EnsureOneCommentLikePerUserService";
 import { IEnsureOnePostLikePerUserService } from "@/modules/social/likes/domain/services/interfaces/IEnsureOnePostLikePerUserService";
 import { EnsureOnePostLikePerUserService } from "@/modules/social/likes/domain/services/EnsureOnePostLikePerUserService";
+import { IBlockedUserRepository } from "@/modules/users/domain/repositories/IBlockedUserRepository";
+import { PrismaBlockedUserRepository } from "@/modules/users/infra/repositories/PrismaBlockedUserRepository";
 
 // -----------------------------------------------------------------------------------------------
 // USER
@@ -44,6 +46,11 @@ container.register<IEnsureEmailIsUniqueService>("EnsureEmailIsUniqueService", {
     );
   },
 });
+
+container.register<IBlockedUserRepository>(
+  "BlockedUserRepository",
+  PrismaBlockedUserRepository,
+);
 
 // -----------------------------------------------------------------------------------------------
 // POST
