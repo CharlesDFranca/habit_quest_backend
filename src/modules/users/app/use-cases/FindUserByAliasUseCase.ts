@@ -3,17 +3,12 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { inject, injectable } from "tsyringe";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 import { UserNotFoundException } from "../errors/UserNotFoundException";
+import { UserDetailsDto } from "../dtos/UserDetailsDTO";
+import { UserMapper } from "../mappers/UserMapper";
 
 type FindUserByAliasInput = { alias: string };
 
-type FindUserByAliasOutput = {
-  userId: string;
-  name: string;
-  alias: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
+type FindUserByAliasOutput = UserDetailsDto;
 
 @injectable()
 export class FindUserByAliasUseCase
@@ -35,13 +30,6 @@ export class FindUserByAliasUseCase
       );
     }
 
-    return {
-      userId: user.id.value,
-      name: user.name.value,
-      email: user.email.value,
-      alias: user.alias.value,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    return UserMapper.toDetails(user);
   }
 }

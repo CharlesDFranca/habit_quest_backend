@@ -3,17 +3,12 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { inject, injectable } from "tsyringe";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { UserNotFoundException } from "../errors/UserNotFoundException";
+import { UserDetailsDto } from "../dtos/UserDetailsDTO";
+import { UserMapper } from "../mappers/UserMapper";
 
 type FindUserByIdInput = { userId: string };
 
-type FindUserByIdOutput = {
-  userId: string;
-  name: string;
-  alias: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
+type FindUserByIdOutput = UserDetailsDto;
 
 @injectable()
 export class FindUserByIdUseCase
@@ -33,13 +28,6 @@ export class FindUserByIdUseCase
       throw new UserNotFoundException(`User not found by "id": ${id.value}`);
     }
 
-    return {
-      userId: user.id.value,
-      name: user.name.value,
-      alias: user.alias.value,
-      email: user.email.value,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    return UserMapper.toDetails(user);
   }
 }

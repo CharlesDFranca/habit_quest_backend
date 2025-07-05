@@ -8,8 +8,9 @@ import { Name } from "@/shared/domain/value-objects/Name";
 import { Email } from "../../domain/value-objects/Email";
 import { Alias } from "@/shared/domain/value-objects/Alias";
 import { Password } from "../../domain/value-objects/Password";
-import { Id } from "@/shared/domain/value-objects/Id";
 import { inject, injectable } from "tsyringe";
+import { UserIdDto } from "../dtos/UserIdDTO";
+import { UserMapper } from "../mappers/UserMapper";
 
 type CreateUserInput = {
   name: string;
@@ -18,7 +19,7 @@ type CreateUserInput = {
   password: string;
 };
 
-type CreateUserOutput = { userId: Id<"UserId"> };
+type CreateUserOutput = UserIdDto;
 
 @injectable()
 export class CreateUserUseCase
@@ -52,6 +53,6 @@ export class CreateUserUseCase
 
     await this.userRepository.save(user);
 
-    return { userId: user.id };
+    return UserMapper.toId(user);
   }
 }

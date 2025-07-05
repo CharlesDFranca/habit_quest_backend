@@ -19,16 +19,14 @@ export class UserControllers {
 
     const { email, alias, name, password } = req.body;
     const createUserUseCase = container.resolve(CreateUserUseCase);
-    const createdUser = await UseCaseExecutor.run(createUserUseCase, {
+    const userId = await UseCaseExecutor.run(createUserUseCase, {
       alias,
       email,
       name,
       password,
     });
 
-    const response = ResponseFormatter.success({
-      userId: createdUser.userId.value,
-    });
+    const response = ResponseFormatter.success(userId);
 
     res.status(201).json(response);
   }
