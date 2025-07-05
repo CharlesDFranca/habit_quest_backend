@@ -4,13 +4,18 @@ import { IBlockedUserRepository } from "../../domain/repositories/IBlockedUserRe
 import { prisma } from "@/shared/infra/database/PrismaClient";
 import { BlockedUserPrismaMapper } from "../mappers/BlockedUserPrismaMapper";
 import { injectable } from "tsyringe";
+import { BlockUserPersistenceException } from "../errors/blocked-user/BlockUserPresistenceException";
 
 @injectable()
 export class PrismaBlockedUserRepository implements IBlockedUserRepository {
   async blockUser(blockedUser: BlockedUser): Promise<void> {
-    await prisma.blockedUser.create({
-      data: BlockedUserPrismaMapper.toPersistence(blockedUser),
-    });
+    try {
+      await prisma.blockedUser.create({
+        data: BlockedUserPrismaMapper.toPersistence(blockedUser),
+      });
+    } catch (error) {
+      throw new BlockUserPersistenceException(blockedUser.id, error);
+    }
   }
 
   async unlockUser(blockedUser: BlockedUser): Promise<void> {

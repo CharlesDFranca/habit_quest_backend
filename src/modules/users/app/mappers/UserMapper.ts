@@ -1,6 +1,6 @@
 import { User } from "../../domain/entities/User";
-import { UserDetailsDto } from "../dtos/UserDetailsDTO";
-import { UserIdDto } from "../dtos/UserIdDTO";
+import { UserDetailsDto } from "../dtos/UserDetailsDto";
+import { UserIdDto } from "../dtos/UserIdDto";
 
 export class UserMapper {
   private constructor() {}
