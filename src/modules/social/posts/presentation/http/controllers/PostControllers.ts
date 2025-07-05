@@ -9,7 +9,6 @@ import { FindLikedPostsByUserIdUseCase } from "../../../app/use-cases/FindLikedP
 import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
 import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
-import { HttpErrorMapper } from "@/shared/presentation/http/HttpErrorMapper";
 
 type FormatedPost = {
   id: string;
@@ -23,137 +22,104 @@ type FormatedPost = {
 
 export class PostControllers {
   static async createPost(req: Request, res: Response) {
-    try {
-      ValidateRequiredFields.use(req.body, [
-        "authorId",
-        "content",
-        "isPrivate",
-      ]);
+    ValidateRequiredFields.use(req.body, ["authorId", "content", "isPrivate"]);
 
-      const createPostUseCase = container.resolve(CreatePostUseCase);
-      const { authorId, content, isPrivate } = req.body;
+    const createPostUseCase = container.resolve(CreatePostUseCase);
+    const { authorId, content, isPrivate } = req.body;
 
-      const files = req.files as Express.Multer.File[];
-      const imagesUrls: ImageInput[] = files.map((file) => {
-        return {
-          buffer: file.buffer,
-          originalName: file.originalname,
-          mimeType: file.mimetype,
-        };
-      });
+    const files = req.files as Express.Multer.File[];
+    const imagesUrls: ImageInput[] = files.map((file) => {
+      return {
+        buffer: file.buffer,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+      };
+    });
 
-      const createdPost = await UseCaseExecutor.run(createPostUseCase, {
-        authorId: authorId,
-        content: content,
-        imagesUrls,
-        isPrivate: isPrivate === "true",
-      });
+    const createdPost = await UseCaseExecutor.run(createPostUseCase, {
+      authorId: authorId,
+      content: content,
+      imagesUrls,
+      isPrivate: isPrivate === "true",
+    });
 
-      const response = ResponseFormatter.success({
-        postId: createdPost.postId.value,
-      });
+    const response = ResponseFormatter.success({
+      postId: createdPost.postId.value,
+    });
 
-      res.status(201).json(response);
-    } catch (err) {
-      if (err instanceof Error) {
-        const error = HttpErrorMapper.toErrorResponse(err);
-        res.status(400).json(ResponseFormatter.error(error));
-        return;
-      }
-    }
+    res.status(201).json(response);
   }
 
   static async findPostsByAuthorId(req: Request, res: Response) {
-    try {
-      ValidateRequiredParameters.use(req.params, ["authorId"]);
+    ValidateRequiredParameters.use(req.params, ["authorId"]);
 
-      const { authorId } = req.params;
-      const findPostsByAuthorId = container.resolve(FindPostsByAuthorIdUseCase);
-      const posts = await UseCaseExecutor.run(findPostsByAuthorId, {
-        authorId,
-      });
+    const { authorId } = req.params;
+    const findPostsByAuthorId = container.resolve(FindPostsByAuthorIdUseCase);
+    const posts = await UseCaseExecutor.run(findPostsByAuthorId, {
+      authorId,
+    });
 
-      const formatedPosts: FormatedPost[] = posts.map((post) => {
-        return {
-          id: post.id.value,
-          content: post.content.value,
-          imageUrls: post.images.map((image) => image.value),
-          commentCount: post.commentCount.value,
-          likeCount: post.likeCount.value,
-          createdAt: post.createdAt,
-          updatedAt: post.updatedAt,
-        } as FormatedPost;
-      });
+    const formatedPosts: FormatedPost[] = posts.map((post) => {
+      return {
+        id: post.id.value,
+        content: post.content.value,
+        imageUrls: post.images.map((image) => image.value),
+        commentCount: post.commentCount.value,
+        likeCount: post.likeCount.value,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+      } as FormatedPost;
+    });
 
-      const response = ResponseFormatter.success(
-        { posts: formatedPosts },
-        { postsCount: formatedPosts.length },
-      );
+    const response = ResponseFormatter.success(
+      { posts: formatedPosts },
+      { postsCount: formatedPosts.length },
+    );
 
-      res.status(200).json(response);
-    } catch (err) {
-      if (err instanceof Error) {
-        const error = HttpErrorMapper.toErrorResponse(err);
-        res.status(400).json(ResponseFormatter.error(error));
-      }
-    }
+    res.status(200).json(response);
   }
 
   static async findPostById(req: Request, res: Response) {
-    try {
-      ValidateRequiredFields.use(req.body, ["postId"]);
+    ValidateRequiredFields.use(req.body, ["postId"]);
 
-      const findPostByIdUseCase = container.resolve(FindPostByIdUseCase);
+    const findPostByIdUseCase = container.resolve(FindPostByIdUseCase);
 
-      const { postId } = req.body;
-      const post = await UseCaseExecutor.run(findPostByIdUseCase, { postId });
+    const { postId } = req.body;
+    const post = await UseCaseExecutor.run(findPostByIdUseCase, { postId });
 
-      const response = ResponseFormatter.success(post);
+    const response = ResponseFormatter.success(post);
 
-      res.status(200).json(response);
-    } catch (err) {
-      if (err instanceof Error) {
-        const error = HttpErrorMapper.toErrorResponse(err);
-        res.status(400).json(ResponseFormatter.error(error));
-      }
-    }
+    res.status(200).json(response);
   }
 
   static async findLikedPostsByUserId(req: Request, res: Response) {
-    try {
-      ValidateRequiredParameters.use(req.params, ["userId"]);
+    ValidateRequiredParameters.use(req.params, ["userId"]);
 
-      const findLikedPostsByUserIdUseCase = container.resolve(
-        FindLikedPostsByUserIdUseCase,
-      );
+    const findLikedPostsByUserIdUseCase = container.resolve(
+      FindLikedPostsByUserIdUseCase,
+    );
 
-      const { userId } = req.params;
-      const posts = await UseCaseExecutor.run(findLikedPostsByUserIdUseCase, {
-        userId,
-      });
+    const { userId } = req.params;
+    const posts = await UseCaseExecutor.run(findLikedPostsByUserIdUseCase, {
+      userId,
+    });
 
-      const formatedPosts: FormatedPost[] = posts.map((post) => {
-        return {
-          id: post.id.value,
-          content: post.content.value,
-          imageUrls: post.images.map((image) => image.value),
-          commentCount: post.commentCount.value,
-          likeCount: post.likeCount.value,
-          createdAt: post.createdAt,
-          updatedAt: post.updatedAt,
-        } as FormatedPost;
-      });
+    const formatedPosts: FormatedPost[] = posts.map((post) => {
+      return {
+        id: post.id.value,
+        content: post.content.value,
+        imageUrls: post.images.map((image) => image.value),
+        commentCount: post.commentCount.value,
+        likeCount: post.likeCount.value,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+      } as FormatedPost;
+    });
 
-      const response = ResponseFormatter.success(formatedPosts, {
-        likedPostsCount: formatedPosts.length,
-      });
+    const response = ResponseFormatter.success(formatedPosts, {
+      likedPostsCount: formatedPosts.length,
+    });
 
-      res.status(200).json(response);
-    } catch (err) {
-      if (err instanceof Error) {
-        const error = HttpErrorMapper.toErrorResponse(err);
-        res.status(400).json(ResponseFormatter.error(error));
-      }
-    }
+    res.status(200).json(response);
   }
 }
