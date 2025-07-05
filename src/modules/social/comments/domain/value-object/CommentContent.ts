@@ -1,3 +1,4 @@
+import { InvalidValueObjectException } from "@/shared/domain/errors/InvalidValueObjectException";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type CommentContentProps = { value: string };
@@ -14,11 +15,11 @@ export class CommentContent extends ValueObject<CommentContentProps> {
     const content = props.value;
 
     if (content.length === 0) {
-      throw new Error("Comment content cannot be empty");
+      throw new InvalidValueObjectException("Comment content cannot be empty");
     }
 
     if (content.length > MAX_LENGTH) {
-      throw new Error(
+      throw new InvalidValueObjectException(
         `Comment content cannot be too long. [MAX: ${MAX_LENGTH}]`,
       );
     }
@@ -30,7 +31,7 @@ export class CommentContent extends ValueObject<CommentContentProps> {
     const MIN_LENGTH_FOR_SUMMARY = 10;
 
     if (maxLength < MIN_LENGTH_FOR_SUMMARY) {
-      throw new Error(
+      throw new InvalidValueObjectException(
         `The maximum length must be at least ${MIN_LENGTH_FOR_SUMMARY} to allow for a meaningful summary`,
       );
     }
