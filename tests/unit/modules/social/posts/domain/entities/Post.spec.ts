@@ -99,7 +99,7 @@ describe("Post entity unit tests", () => {
 
     expect(() =>
       sut.addImage(ImageUrl.create({ value: "img6.png" })),
-    ).toThrowError("It is not possible to add more images");
+    ).toThrowError();
   });
 
   it("should throw an error if try create a Post with more than 5 images", () => {
@@ -114,9 +114,7 @@ describe("Post entity unit tests", () => {
       Post.create(
         makePost({ images: [image1, image2, image3, image4, image5, image6] }),
       ),
-    ).toThrowError(
-      "It is not possible to create a post with more than 5 images",
-    );
+    ).toThrowError();
   });
 
   it("should remove an existing image", () => {

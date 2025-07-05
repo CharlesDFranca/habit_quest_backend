@@ -3,6 +3,7 @@ import { Id } from "@/shared/domain/value-objects/Id";
 import { PostContent } from "../value-objects/PostContent";
 import { ImageUrl } from "@/shared/domain/value-objects/ImageUrl";
 import { Counter } from "@/shared/domain/value-objects/Counter";
+import { ExceededPostImageLimitException } from "../errors/ExceededPostImageLimitException";
 
 type PostProps = {
   authorId: Id<"UserId">;
@@ -24,9 +25,7 @@ export class Post extends Entity<"PostId"> {
     const MAX_IMAGES = 5;
 
     if (props.images.length > MAX_IMAGES) {
-      throw new Error(
-        "It is not possible to create a post with more than 5 images",
-      );
+      throw new ExceededPostImageLimitException(MAX_IMAGES);
     }
 
     super(postId, props.createdAt, props.updatedAt);
@@ -87,9 +86,7 @@ export class Post extends Entity<"PostId"> {
     const MAX_IMAGES = 5;
 
     if (this.props.images.length >= MAX_IMAGES) {
-      throw new Error(
-        `It is not possible to add more images. [MAX: ${MAX_IMAGES}]`,
-      );
+      throw new ExceededPostImageLimitException(MAX_IMAGES);
     }
 
     this.props.images.push(newImage);
