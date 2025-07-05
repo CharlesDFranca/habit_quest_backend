@@ -17,12 +17,7 @@ export class PostLikeControllers {
       postId,
     });
 
-    const response = ResponseFormatter.success(
-      {
-        postLikeId: postLikeId.value,
-      },
-      { postId, userId },
-    );
+    const response = ResponseFormatter.success(postLikeId, { postId, userId });
 
     res.status(201).json(response);
   }

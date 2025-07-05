@@ -10,16 +10,6 @@ import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
 import { ResponseFormatter } from "@/shared/presentation/http/ResponseFormatter";
 
-type FormatedPost = {
-  id: string;
-  content: string;
-  imageUrls: string[];
-  commentCount: number;
-  likeCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 export class PostControllers {
   static async createPost(req: Request, res: Response) {
     ValidateRequiredFields.use(req.body, ["authorId", "content", "isPrivate"]);
@@ -36,16 +26,14 @@ export class PostControllers {
       };
     });
 
-    const createdPost = await UseCaseExecutor.run(createPostUseCase, {
+    const postId = await UseCaseExecutor.run(createPostUseCase, {
       authorId: authorId,
       content: content,
       imagesUrls,
       isPrivate: isPrivate === "true",
     });
 
-    const response = ResponseFormatter.success({
-      postId: createdPost.postId.value,
-    });
+    const response = ResponseFormatter.success(postId);
 
     res.status(201).json(response);
   }
@@ -59,22 +47,9 @@ export class PostControllers {
       authorId,
     });
 
-    const formatedPosts: FormatedPost[] = posts.map((post) => {
-      return {
-        id: post.id.value,
-        content: post.content.value,
-        imageUrls: post.images.map((image) => image.value),
-        commentCount: post.commentCount.value,
-        likeCount: post.likeCount.value,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-      } as FormatedPost;
+    const response = ResponseFormatter.success(posts, {
+      postsCount: posts.length,
     });
-
-    const response = ResponseFormatter.success(
-      { posts: formatedPosts },
-      { postsCount: formatedPosts.length },
-    );
 
     res.status(200).json(response);
   }
@@ -103,21 +78,8 @@ export class PostControllers {
     const posts = await UseCaseExecutor.run(findLikedPostsByUserIdUseCase, {
       userId,
     });
-
-    const formatedPosts: FormatedPost[] = posts.map((post) => {
-      return {
-        id: post.id.value,
-        content: post.content.value,
-        imageUrls: post.images.map((image) => image.value),
-        commentCount: post.commentCount.value,
-        likeCount: post.likeCount.value,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-      } as FormatedPost;
-    });
-
-    const response = ResponseFormatter.success(formatedPosts, {
-      likedPostsCount: formatedPosts.length,
+    const response = ResponseFormatter.success(posts, {
+      likedPostsCount: posts.length,
     });
 
     res.status(200).json(response);
