@@ -37,18 +37,18 @@ export class BlockUserUseCase
       throw new CannotBlockYourselfException();
     }
 
-    const [blockedByExists, blockedUserExists] = await Promise.all([
+    const [blockerIdExists, blockedIdExists] = await Promise.all([
       !!this.userRepository.findUserById(blockerId),
       !!this.userRepository.findUserById(blockedId),
     ]);
 
-    if (!blockedByExists) {
+    if (!blockerIdExists) {
       throw new UserNotFoundException(
         `User not found by id: ${blockerId.value}`,
       );
     }
 
-    if (!blockedUserExists) {
+    if (!blockedIdExists) {
       throw new UserNotFoundException(
         `User not found by id: ${blockedId.value}`,
       );
@@ -56,7 +56,7 @@ export class BlockUserUseCase
 
     const alreadyBlocked = await this.blockedUserRepository.isBlocked(
       blockerId,
-      blockerId,
+      blockedId,
     );
 
     if (alreadyBlocked) {

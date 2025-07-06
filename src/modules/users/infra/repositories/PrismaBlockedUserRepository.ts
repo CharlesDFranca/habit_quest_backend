@@ -4,7 +4,7 @@ import { IBlockedUserRepository } from "../../domain/repositories/IBlockedUserRe
 import { prisma } from "@/shared/infra/database/PrismaClient";
 import { BlockedUserPrismaMapper } from "../mappers/BlockedUserPrismaMapper";
 import { injectable } from "tsyringe";
-import { BlockUserPersistenceException } from "../errors/blocked-user/BlockUserPresistenceException";
+import { BlockUserPersistenceException } from "../errors/blocked-user/BlockUserPersistenceException";
 
 @injectable()
 export class PrismaBlockedUserRepository implements IBlockedUserRepository {

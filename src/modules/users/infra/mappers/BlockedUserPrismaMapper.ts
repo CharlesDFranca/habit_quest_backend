@@ -8,8 +8,8 @@ export class BlockedUserPrismaMapper {
   static toDomain(blockedUserPersitedData: PrismaBlockedUser): BlockedUser {
     return BlockedUser.create(
       {
-        blockedBy: Id.create({ value: blockedUserPersitedData.blockerId }),
-        blockedUser: Id.create({ value: blockedUserPersitedData.blockedId }),
+        blockerId: Id.create({ value: blockedUserPersitedData.blockerId }),
+        blockedId: Id.create({ value: blockedUserPersitedData.blockedId }),
         createdAt: blockedUserPersitedData.blockedAt,
       },
       Id.create({ value: blockedUserPersitedData.id }),
@@ -19,8 +19,8 @@ export class BlockedUserPrismaMapper {
   static toPersistence(blockedUser: BlockedUser): PrismaBlockedUser {
     return {
       id: blockedUser.id.value,
-      blockedId: blockedUser.blokedUser.value,
-      blockerId: blockedUser.blockdBy.value,
+      blockerId: blockedUser.blockerId.value,
+      blockedId: blockedUser.blockedId.value,
       blockedAt: blockedUser.createdAt,
     };
   }
