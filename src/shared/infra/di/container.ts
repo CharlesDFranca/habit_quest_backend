@@ -23,6 +23,8 @@ import { IEnsureOnePostLikePerUserService } from "@/modules/social/likes/domain/
 import { EnsureOnePostLikePerUserService } from "@/modules/social/likes/domain/services/EnsureOnePostLikePerUserService";
 import { IBlockedUserRepository } from "@/modules/users/domain/repositories/IBlockedUserRepository";
 import { PrismaBlockedUserRepository } from "@/modules/users/infra/repositories/PrismaBlockedUserRepository";
+import { ITokenProvider } from "@/shared/app/interfaces/ITokenProvider";
+import { JWTTokenProvider } from "../services/JWTTokenProvider";
 
 // -----------------------------------------------------------------------------------------------
 // USER
@@ -101,3 +103,9 @@ container.register<IEnsureOnePostLikePerUserService>(
     },
   },
 );
+
+// -----------------------------------------------------------------------------------------------
+// TOKEN PROVIDER
+// -----------------------------------------------------------------------------------------------
+
+container.register<ITokenProvider>("TokenProvider", JWTTokenProvider);
