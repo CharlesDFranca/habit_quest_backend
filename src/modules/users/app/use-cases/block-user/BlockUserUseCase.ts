@@ -12,8 +12,8 @@ import { UserAlreadyBlockedException } from "../../errors/UserAlreadyBlockedExce
 import { BlockUserFailedException } from "../../errors/BlockUserFailedException";
 
 type BlockUserInput = {
-  blockedBy: string;
-  blockedUser: string;
+  blockerId: string;
+  blockedId: string;
 };
 
 type BlockUserOutput = BlockedUserIdDto;
@@ -30,42 +30,42 @@ export class BlockUserUseCase
   ) {}
 
   async execute(input: BlockUserInput): Promise<BlockedUserIdDto> {
-    const blockedById = Id.create<"UserId">({ value: input.blockedBy });
-    const blockedUserId = Id.create<"UserId">({ value: input.blockedUser });
+    const blockerId = Id.create<"UserId">({ value: input.blockerId });
+    const blockedId = Id.create<"UserId">({ value: input.blockedId });
 
-    if (blockedById.isEqual(blockedUserId)) {
+    if (blockerId.isEqual(blockedId)) {
       throw new CannotBlockYourselfException();
     }
 
     const [blockedByExists, blockedUserExists] = await Promise.all([
-      !!this.userRepository.findUserById(blockedById),
-      !!this.userRepository.findUserById(blockedUserId),
+      !!this.userRepository.findUserById(blockerId),
+      !!this.userRepository.findUserById(blockedId),
     ]);
 
     if (!blockedByExists) {
       throw new UserNotFoundException(
-        `User not found by id: ${blockedById.value}`,
+        `User not found by id: ${blockerId.value}`,
       );
     }
 
     if (!blockedUserExists) {
       throw new UserNotFoundException(
-        `User not found by id: ${blockedUserId.value}`,
+        `User not found by id: ${blockedId.value}`,
       );
     }
 
     const alreadyBlocked = await this.blockedUserRepository.isBlocked(
-      blockedById,
-      blockedUserId,
+      blockerId,
+      blockerId,
     );
 
     if (alreadyBlocked) {
-      throw new UserAlreadyBlockedException(blockedUserId);
+      throw new UserAlreadyBlockedException(blockedId);
     }
 
     const blockedUser = BlockedUser.create({
-      blockedBy: blockedById,
-      blockedUser: blockedUserId,
+      blockerId,
+      blockedId,
     });
 
     try {

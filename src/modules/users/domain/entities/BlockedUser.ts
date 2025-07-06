@@ -2,8 +2,8 @@ import { Entity } from "@/shared/domain/entities/Entity";
 import { Id } from "@/shared/domain/value-objects/Id";
 
 type BlockedUserProps = {
-  blockedBy: Id<"UserId">;
-  blockedUser: Id<"UserId">;
+  blockerId: Id<"UserId">;
+  blockedId: Id<"UserId">;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -24,11 +24,11 @@ export class BlockedUser extends Entity<"BlockedUserId"> {
     return new BlockedUser(id, props);
   }
 
-  get blockdBy(): Id<"UserId"> {
-    return this.props.blockedBy;
+  get blockerId(): Id<"UserId"> {
+    return this.props.blockerId;
   }
 
-  get blokedUser(): Id<"UserId"> {
-    return this.props.blockedUser;
+  get blockedId(): Id<"UserId"> {
+    return this.props.blockedId;
   }
 }
