@@ -4,4 +4,5 @@ export interface IEnvConfig {
   getPort(): number;
   getSaltRounds(): number;
   getStorageDriver(): StorageDrivers;
+  getJwtSecret(): string;
 }

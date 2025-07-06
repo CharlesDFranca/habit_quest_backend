@@ -77,6 +77,30 @@ class EnvConfig implements IEnvConfig {
 
     return STORAGE_DRIVER as StorageDrivers;
   }
+
+  getJwtSecret(): string {
+    const JWT_SECRET = process.env.JWT_SECRET;
+
+    if (!JWT_SECRET) {
+      throw new MissingEnvVariableException("JWT_SECRET");
+    }
+
+    if (typeof JWT_SECRET !== "string") {
+      throw new InvalidEnvVariableException(
+        "JWT_SECRET",
+        "It must be a string.",
+      );
+    }
+
+    if (JWT_SECRET.length !== 64) {
+      throw new InvalidEnvVariableException(
+        "JWT_SECRET",
+        "Must be 64 characters long.",
+      );
+    }
+
+    return JWT_SECRET;
+  }
 }
 
 const envConfig = new EnvConfig();
