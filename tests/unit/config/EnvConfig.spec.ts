@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { envConfig } from "@/config/env/EnvConfig";
+import { MissingEnvVariableException } from "@/config/errors/MissingEnvVariableException";
+import { InvalidEnvVariableException } from "@/config/errors/InvalidEnvVariableException";
+import { validStorageDrivers } from "@/config/types/StorageDriversTypes";
 
 describe("EnvConfig unit tests", () => {
   const OLD_ENV = process.env;
@@ -13,74 +16,150 @@ describe("EnvConfig unit tests", () => {
   });
 
   describe("getPort", () => {
-    it("should return a valid port number", () => {
+    it("should return port number if valid", () => {
       process.env.PORT = "3000";
 
-      const port = envConfig.getPort();
+      const result = envConfig.getPort();
 
-      expect(port).toBe(3000);
+      expect(result).toBe(3000);
     });
 
-    it("should throw if PORT is not a number", () => {
+    it("should throw MissingEnvVariableException if PORT is missing", () => {
+      delete process.env.PORT;
+
+      expect(() => envConfig.getPort()).toThrow(
+        new MissingEnvVariableException("PORT"),
+      );
+    });
+
+    it("should throw InvalidEnvVariableException if PORT is not a number", () => {
       process.env.PORT = "abc";
 
-      expect(() => envConfig.getPort()).toThrowError();
+      expect(() => envConfig.getPort()).toThrow(
+        new InvalidEnvVariableException("PORT", "It must be a number."),
+      );
     });
 
-    it("should throw if PORT is less than zero", () => {
+    it("should throw InvalidEnvVariableException if PORT is negative", () => {
       process.env.PORT = "-1";
 
-      expect(() => envConfig.getPort()).toThrowError();
+      expect(() => envConfig.getPort()).toThrow(
+        new InvalidEnvVariableException("PORT", "It cannot be negative."),
+      );
     });
   });
 
   describe("getSaltRounds", () => {
-    it("should return a valid salt rounds number", () => {
-      process.env.SALT_ROUNDS = "12";
+    it("should return salt rounds number if valid", () => {
+      process.env.SALT_ROUNDS = "10";
 
-      const rounds = envConfig.getSaltRounds();
+      const result = envConfig.getSaltRounds();
 
-      expect(rounds).toBe(12);
+      expect(result).toBe(10);
     });
 
-    it("should throw if SALT_ROUNDS is not a number", () => {
+    it("should throw MissingEnvVariableException if SALT_ROUNDS is missing", () => {
+      delete process.env.SALT_ROUNDS;
+
+      expect(() => envConfig.getSaltRounds()).toThrow(
+        new MissingEnvVariableException("SALT_ROUNDS"),
+      );
+    });
+
+    it("should throw InvalidEnvVariableException if SALT_ROUNDS is not a number", () => {
       process.env.SALT_ROUNDS = "abc";
 
-      expect(() => envConfig.getSaltRounds()).toThrowError();
+      expect(() => envConfig.getSaltRounds()).toThrow(
+        new InvalidEnvVariableException("SALT_ROUNDS", "It must be a number."),
+      );
     });
 
-    it("should throw if SALT_ROUNDS is less than zero", () => {
+    it("should throw InvalidEnvVariableException if SALT_ROUNDS is negative", () => {
       process.env.SALT_ROUNDS = "-5";
 
-      expect(() => envConfig.getSaltRounds()).toThrowError();
+      expect(() => envConfig.getSaltRounds()).toThrow(
+        new InvalidEnvVariableException(
+          "SALT_ROUNDS",
+          "It cannot be negative.",
+        ),
+      );
     });
   });
 
   describe("getStorageDriver", () => {
-    it("should return a valid storage driver", () => {
+    it("should return storage driver if valid", () => {
       process.env.STORAGE_DRIVER = "disk";
 
-      const driver = envConfig.getStorageDriver();
+      const result = envConfig.getStorageDriver();
 
-      expect(driver).toBe("disk");
+      expect(result).toBe("disk");
     });
 
-    it("should throw if STORAGE_DRIVER is empty", () => {
-      process.env.STORAGE_DRIVER = "";
+    it("should throw MissingEnvVariableException if STORAGE_DRIVER is missing", () => {
+      delete process.env.STORAGE_DRIVER;
 
-      expect(() => envConfig.getStorageDriver()).toThrowError();
+      expect(() => envConfig.getStorageDriver()).toThrow(
+        new MissingEnvVariableException("STORAGE_DRIVER"),
+      );
     });
 
-    it("should throw if STORAGE_DRIVER is not a string", () => {
-      process.env.STORAGE_DRIVER = 1 as unknown as string;
+    it("should throw InvalidEnvVariableException if STORAGE_DRIVER is not a string", () => {
+      process.env.STORAGE_DRIVER = 123 as unknown as string;
 
-      expect(() => envConfig.getStorageDriver()).toThrowError();
+      expect(() => envConfig.getStorageDriver()).toThrow(
+        new InvalidEnvVariableException(
+          "STORAGE_DRIVER",
+          "It must be a string.",
+        ),
+      );
     });
 
-    it("should throw if STORAGE_DRIVER is invalid", () => {
-      process.env.STORAGE_DRIVER = "invalid";
+    it("should throw InvalidEnvVariableException if STORAGE_DRIVER is invalid", () => {
+      process.env.STORAGE_DRIVER = "banana";
 
-      expect(() => envConfig.getStorageDriver()).toThrowError();
+      expect(() => envConfig.getStorageDriver()).toThrow(
+        new InvalidEnvVariableException(
+          "STORAGE_DRIVER",
+          `Must be one of: [${validStorageDrivers.join(", ")}]`,
+        ),
+      );
+    });
+  });
+
+  describe("getJwtSecret", () => {
+    it("should return JWT secret if valid", () => {
+      process.env.JWT_SECRET = "a".repeat(64);
+
+      const result = envConfig.getJwtSecret();
+
+      expect(result).toBe("a".repeat(64));
+    });
+
+    it("should throw MissingEnvVariableException if JWT_SECRET is missing", () => {
+      delete process.env.JWT_SECRET;
+
+      expect(() => envConfig.getJwtSecret()).toThrow(
+        new MissingEnvVariableException("JWT_SECRET"),
+      );
+    });
+
+    it("should throw InvalidEnvVariableException if JWT_SECRET is not a string", () => {
+      process.env.JWT_SECRET = 123 as unknown as string;
+
+      expect(() => envConfig.getJwtSecret()).toThrow(
+        new InvalidEnvVariableException("JWT_SECRET", "It must be a string."),
+      );
+    });
+
+    it("should throw InvalidEnvVariableException if JWT_SECRET length is not 64", () => {
+      process.env.JWT_SECRET = "short_secret";
+
+      expect(() => envConfig.getJwtSecret()).toThrow(
+        new InvalidEnvVariableException(
+          "JWT_SECRET",
+          "Must be 64 characters long.",
+        ),
+      );
     });
   });
 });
