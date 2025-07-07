@@ -1,4 +1,9 @@
+export type JWTPayload = {
+  sub: string;
+  [key: string]: unknown;
+};
+
 export interface ITokenProvider {
-  generate(payload: unknown): string;
-  veriry(token: string): unknown;
+  generate(payload: JWTPayload): string;
+  veriry(token: string): JWTPayload;
 }

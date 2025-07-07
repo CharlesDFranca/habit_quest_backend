@@ -1,12 +1,10 @@
 import jwt from "jsonwebtoken";
-import { ITokenProvider } from "@/shared/app/interfaces/ITokenProvider";
+import {
+  ITokenProvider,
+  JWTPayload,
+} from "@/shared/app/interfaces/ITokenProvider";
 import { envConfig } from "@/config/env/EnvConfig";
 import { injectable } from "tsyringe";
-
-export type JWTPayload = {
-  sub: string;
-  [key: string]: unknown;
-};
 
 @injectable()
 export class JWTTokenProvider implements ITokenProvider {
