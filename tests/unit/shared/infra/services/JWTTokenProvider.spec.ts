@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import jwt from "jsonwebtoken";
 import { JWTTokenProvider } from "@/shared/infra/services/JWTTokenProvider";
 
-const validSecret = "a".repeat(64);
+const validSecret = "a".repeat(128); 
 
 describe("JWTTokenProvider", () => {
   let tokenProvider: JWTTokenProvider;
@@ -43,7 +43,7 @@ describe("JWTTokenProvider", () => {
       const payload = { sub: "user-xyz", role: "member" };
       const token = jwt.sign(payload, validSecret);
 
-      const verified = tokenProvider.veriry(token);
+      const verified = tokenProvider.verify(token);
 
       expect(verified.sub).toBe("user-xyz");
       expect(verified.role).toBe("member");
@@ -53,7 +53,7 @@ describe("JWTTokenProvider", () => {
       const token = jwt.sign({ sub: "user-def" }, validSecret);
       const spy = vi.spyOn(jwt, "verify");
 
-      tokenProvider.veriry(token);
+      tokenProvider.verify(token);
 
       expect(spy).toHaveBeenCalledWith(token, validSecret);
     });
@@ -61,7 +61,7 @@ describe("JWTTokenProvider", () => {
     it("should throw if the token is invalid", () => {
       const invalidToken = "this.is.not.valid";
 
-      expect(() => tokenProvider.veriry(invalidToken)).toThrow();
+      expect(() => tokenProvider.verify(invalidToken)).toThrow();
     });
   });
 });

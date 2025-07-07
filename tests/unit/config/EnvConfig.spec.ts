@@ -127,37 +127,45 @@ describe("EnvConfig unit tests", () => {
   });
 
   describe("getJwtSecret", () => {
+    const validHexSecret = "a".repeat(128);
+
+    beforeEach(() => {
+      delete process.env.JWT_SECRET;
+    });
+
     it("should return JWT secret if valid", () => {
-      process.env.JWT_SECRET = "a".repeat(64);
+      process.env.JWT_SECRET = validHexSecret;
 
       const result = envConfig.getJwtSecret();
 
-      expect(result).toBe("a".repeat(64));
+      expect(result).toBe(validHexSecret);
     });
 
     it("should throw MissingEnvVariableException if JWT_SECRET is missing", () => {
-      delete process.env.JWT_SECRET;
-
       expect(() => envConfig.getJwtSecret()).toThrow(
         new MissingEnvVariableException("JWT_SECRET"),
       );
     });
 
-    it("should throw InvalidEnvVariableException if JWT_SECRET is not a string", () => {
-      process.env.JWT_SECRET = 123 as unknown as string;
-
-      expect(() => envConfig.getJwtSecret()).toThrow(
-        new InvalidEnvVariableException("JWT_SECRET", "It must be a string."),
-      );
-    });
-
-    it("should throw InvalidEnvVariableException if JWT_SECRET length is not 64", () => {
-      process.env.JWT_SECRET = "short_secret";
+    it("should throw InvalidEnvVariableException if JWT_SECRET is not valid hex", () => {
+      process.env.JWT_SECRET = "g".repeat(128);
 
       expect(() => envConfig.getJwtSecret()).toThrow(
         new InvalidEnvVariableException(
           "JWT_SECRET",
-          "Must be 64 characters long.",
+          "It must be a valid hex string.",
+        ),
+      );
+    });
+
+    it("should throw InvalidEnvVariableException if JWT_SECRET length is not 128", () => {
+      // string hex válida mas com tamanho incorreto
+      process.env.JWT_SECRET = "a".repeat(64);
+
+      expect(() => envConfig.getJwtSecret()).toThrow(
+        new InvalidEnvVariableException(
+          "JWT_SECRET",
+          "It must be 128 hexadecimal characters (64 bytes).",
         ),
       );
     });

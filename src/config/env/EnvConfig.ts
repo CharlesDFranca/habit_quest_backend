@@ -85,17 +85,17 @@ class EnvConfig implements IEnvConfig {
       throw new MissingEnvVariableException("JWT_SECRET");
     }
 
-    if (typeof JWT_SECRET !== "string") {
+    if (!/^[0-9a-fA-F]+$/.test(JWT_SECRET)) {
       throw new InvalidEnvVariableException(
         "JWT_SECRET",
-        "It must be a string.",
+        "It must be a valid hex string.",
       );
     }
 
-    if (JWT_SECRET.length !== 64) {
+    if (JWT_SECRET.length !== 128) {
       throw new InvalidEnvVariableException(
         "JWT_SECRET",
-        "Must be 64 characters long.",
+        "It must be 128 hexadecimal characters (64 bytes).",
       );
     }
 
