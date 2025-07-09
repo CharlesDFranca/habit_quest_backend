@@ -7,6 +7,10 @@ userRoutes.post("/users", (req: Request, res: Response) =>
   UserControllers.createUser(req, res),
 );
 
+userRoutes.post("/userLogin", (req: Request, res: Response) =>
+  UserControllers.userLogin(req, res),
+);
+
 userRoutes.get("/users/findAlias", (req: Request, res: Response) =>
   UserControllers.findUserByAlias(req, res),
 );

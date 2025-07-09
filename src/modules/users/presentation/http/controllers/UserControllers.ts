@@ -1,5 +1,5 @@
 import { CreateUserUseCase } from "@/modules/users/app/use-cases/CreateUserUseCase";
-import { UserIdDto } from "@/modules/users/app/dtos/UserIdDTO";
+import { UserIdDto } from "@/modules/users/app/dtos/UserIdDto";
 import { FindUserByAliasUseCase } from "@/modules/users/app/use-cases/FindUserByAliasUseCase";
 import { FindUserByIdUseCase } from "@/modules/users/app/use-cases/FindUserByIdUseCase";
 import { UseCaseExecutor } from "@/shared/app/UseCaseExecutor";
@@ -9,7 +9,8 @@ import { ValidateRequiredFields } from "@/shared/utils/ValidateRequiredFields";
 import { ValidateRequiredParameters } from "@/shared/utils/ValidateRequiredParameters";
 import { Request, Response } from "express";
 import { container } from "tsyringe";
-import { UserDetailsDto } from "@/modules/users/app/dtos/UserDetailsDTO";
+import { UserDetailsDto } from "@/modules/users/app/dtos/UserDetailsDto";
+import { UserLoginUseCase } from "@/modules/users/app/use-cases/UserLoginUseCase";
 
 export class UserControllers {
   static async createUser(req: Request, res: Response) {
@@ -62,6 +63,23 @@ export class UserControllers {
 
     const response: ApiResponse<UserDetailsDto> =
       ResponseFormatter.success<UserDetailsDto>(userData);
+
+    res.status(200).json(response);
+  }
+
+  static async userLogin(req: Request, res: Response) {
+    ValidateRequiredFields.use(req.body, ["email", "password"]);
+
+    const { email, password } = req.body;
+
+    const userLoginUseCase = container.resolve(UserLoginUseCase);
+
+    const token = await UseCaseExecutor.run(userLoginUseCase, {
+      email,
+      password,
+    });
+
+    const response = ResponseFormatter.success(token);
 
     res.status(200).json(response);
   }

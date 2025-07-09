@@ -14,7 +14,7 @@ export class JWTTokenProvider implements ITokenProvider {
     return jwt.sign(payload, this.JWT_SECRET);
   }
 
-  veriry(token: string): JWTPayload {
+  verify(token: string): JWTPayload {
     return jwt.verify(token, this.JWT_SECRET) as JWTPayload;
   }
 }

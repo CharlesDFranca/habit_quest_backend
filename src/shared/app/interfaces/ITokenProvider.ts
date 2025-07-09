@@ -5,5 +5,5 @@ export type JWTPayload = {
 
 export interface ITokenProvider {
   generate(payload: JWTPayload): string;
-  veriry(token: string): JWTPayload;
+  verify(token: string): JWTPayload;
 }
