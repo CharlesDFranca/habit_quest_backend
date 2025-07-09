@@ -1,4 +1,4 @@
-import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
+import { ErrorCodes } from "@/shared/errors/enums/codes";
 import { AppError } from "./AppError";
 
 export class MissingRequiredParametersException extends AppError {

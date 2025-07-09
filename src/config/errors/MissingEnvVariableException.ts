@@ -1,4 +1,4 @@
-import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
+import { ErrorCodes } from "@/shared/errors/enums/codes";
 import { InfraError } from "@/shared/infra/errors/InfraError";
 
 export class MissingEnvVariableException extends InfraError {

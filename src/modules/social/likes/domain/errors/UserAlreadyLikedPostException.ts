@@ -1,5 +1,5 @@
 import { DomainError } from "@/shared/domain/errors/DomainError";
-import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
+import { ErrorCodes } from "@/shared/errors/enums/codes";
 
 export class UserAlreadyLikedPostException extends DomainError {
   code = ErrorCodes.ALREADY_LIKED;

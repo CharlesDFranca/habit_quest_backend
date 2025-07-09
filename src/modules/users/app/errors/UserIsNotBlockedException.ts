@@ -1,6 +1,6 @@
 import { AppError } from "@/shared/app/errors/AppError";
 import { Id } from "@/shared/domain/value-objects/Id";
-import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
+import { ErrorCodes } from "@/shared/errors/enums/codes";
 
 type IsNotBlockedDetails = {
   userId: string;

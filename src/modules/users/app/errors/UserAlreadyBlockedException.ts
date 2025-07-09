@@ -1,5 +1,5 @@
 import { AppError } from "@/shared/app/errors/AppError";
-import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
+import { ErrorCodes } from "@/shared/errors/enums/codes";
 import { Id } from "@/shared/domain/value-objects/Id";
 
 export class UserAlreadyBlockedException extends AppError {

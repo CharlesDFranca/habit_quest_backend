@@ -1,6 +1,6 @@
 import { DomainError } from "@/shared/domain/errors/DomainError";
 import { Alias } from "@/shared/domain/value-objects/Alias";
-import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
+import { ErrorCodes } from "@/shared/errors/enums/codes";
 
 export class AliasAlreadyUsedException extends DomainError {
   code = ErrorCodes.ALIAS_ALREADY_USED;
