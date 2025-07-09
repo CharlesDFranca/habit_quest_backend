@@ -1,4 +1,4 @@
-import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
+import { ErrorCodes } from "@/shared/errors/enums/codes";
 import { DomainError } from "./DomainError";
 
 export class InvalidEntityTimestampsException extends DomainError {

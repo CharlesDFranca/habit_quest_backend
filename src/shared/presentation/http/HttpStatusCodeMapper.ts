@@ -1,4 +1,4 @@
-import { ErrorCodes } from "@/shared/errors/enums/ErrorCodes";
+import { ErrorCodes } from "@/shared/errors/enums/codes";
 
 export class HttpStatusCodeMapper {
   static fromCode(code: string): number {
@@ -17,6 +17,10 @@ export class HttpStatusCodeMapper {
       case ErrorCodes.EXCEEDED_POST_IMAGE_LIMIT:
       case ErrorCodes.CANNOT_BLOCK_YOURSELF:
         return 422;
+
+      case ErrorCodes.MALFORMED_AUTH_HEADER:
+      case ErrorCodes.UNAUTHORIZED:
+        return 401;
 
       case ErrorCodes.MISSING_REQUIRED_FIELDS:
       case ErrorCodes.MISSING_REQUIRED_PARAMETERS:
